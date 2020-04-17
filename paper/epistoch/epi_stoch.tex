@@ -1,0 +1,378 @@
+%% Based on a TeXnicCenter-Template by Tino Weinkauf.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% HEADER
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[twoside,USenglish,10pt]{article}
+% Alternative Options:
+%	Paper Size: a4paper / a5paper / b5paper / letterpaper / legalpaper / executivepaper
+% Duplex: oneside / twoside
+% Base Font Size: 10pt / 11pt / 12pt
+
+
+%% Language %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage[USenglish]{babel} %francais, polish, spanish, ...
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+%%%% Fonts %%%%%%%%%
+
+%%%% See psnfss
+
+
+%\usepackage{bookman}
+%
+\usepackage[sc,osf,slantedGreek]{mathpazo}
+\linespread{1.08}        % Palatino needs more leading
+
+\usepackage{helvet}
+\usepackage{courier}
+%
+\renewcommand{\fontsubfuzz}{0.44pt}
+
+\usepackage[T1]{fontenc}
+\usepackage{textcomp}
+%\usepackage{tracefnt} % used to trace font substitutions
+
+%\usepackage[nointegrals]{wasysym} % picture and symbols  fonts
+
+\def\wasyfamily{\fontencoding{U}\fontfamily{wasy}\selectfont}
+\def\smiley     {\mbox{\wasyfamily\char44}}
+
+%% Packages for Graphics & Figures %%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{graphicx} %%For loading graphic files
+%\usepackage{subfig} %%Subfigures inside a figure
+%\usepackage{pst-all} %%PSTricks - not useable with pdfLaTeX
+
+\usepackage[margin=1.0in]{geometry}
+
+%% Please note:
+%% Images can be included using \includegraphics{Dateiname}
+%% resp. using the dialog in the Insert menu.
+%% 
+%% The mode "LaTeX => PDF" allows the following formats:
+%%   .jpg  .png  .pdf  .mps
+%% 
+%% The modes "LaTeX => DVI", "LaTeX => PS" und "LaTeX => PS => PDF"
+%% allow the following formats:
+%%   .eps  .ps  .bmp  .pict  .pntg
+
+
+%% Math Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\usepackage{amsmath}
+\usepackage{amsthm}
+\usepackage{amsfonts}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{bm}
+
+\lstset{language=python}
+\newcommand{\floor}[1]{\left[#1\right]}
+
+%% Line Spacing %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{setspace}
+%\singlespacing        %% 1-spacing (default)
+%\onehalfspacing       %% 1,5-spacing
+%\doublespacing        %% 2-spacing
+
+
+%% Other Packages %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%\usepackage{a4wide} %%Smaller margins = more text per page.
+%\usepackage{fancyhdr} %%Fancy headings
+%\usepackage{longtable} %%For tables, that exceed one page
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Macros
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newcommand{\ie}{i.e.\xspace}
+\newcommand{\eg}{e.g.\xspace}
+\newcommand{\etc}{etc.\xspace}
+
+\newcommand{\ra}{\rightarrow }
+\newcommand{\rai}{\rightarrow \infty}
+
+\newcommand{\Fo}{F_e}
+\newcommand\ioi{\int_{0}^{\infty}}
+\newcommand{\intot}[1][t]{\ensuremath{\int_0^{#1}}}
+\newcommand{\sumon}[1][n]{\ensuremath{\sum_{#1=0}^\infty}}
+\newcommand{\oot}[1][t]{\ensuremath{\frac{1}{#1}}}
+
+\newcommand{\abs}[1]{\left|{#1}\right|}
+% \newcommand{\floor}[1]{\left\lfloor {#1} \right\rfloor}
+\newcommand{\ceil}[1]{\left\lceil {#1} \right\rceil}
+\newcommand{\Wt}{\tilde{W}}
+\newcommand{\ms}{m_{\scriptscriptstyle {s}}}
+
+\newcommand{\ti}[1]{\widetilde{#1}}
+\newcommand{\wt}[1]{\widetilde{#1}}
+\newcommand{\bl}{{\vec{\lambda}}}
+
+\newcommand{\sumS}[1]{\ensuremath{\sum_{#1 \in \cS}}}
+\DeclareMathOperator{\diag}{Diag}
+
+
+\newcommand{\mb}{\bar{\mu}}
+\newcommand{\povm}{\left( \frac{1}{2^m}\right)}
+\newcommand{\ovm}{\frac{1}{2^m}}
+\newcommand{\vp}{\varphi}
+\newcommand{\lh}{\limsup_{h\downarrow 0}}
+\newcommand{\imf}{\int_{-\infty}^{~\infty}}
+\newcommand{\xbn}{|x_n|}
+\newcommand{\oxbn}{\frac{1}{|x_n|}}
+
+\newcommand{\bn}[2]{\binom{#1}{#2}}
+\newcommand{\pois}[2]{\ensuremath{\frac{\left(#1\right)^{#2} e^{- #1} }{ #2! } }}
+\newcommand{\Pois}[2]{\pois{#2}{#1}}
+
+\newcommand{\Ab}{\overline{A}\xspace}
+\newcommand{\Bb}{\overline{B}\xspace}
+\newcommand{\Cb}{\overline{C}\xspace}
+\newcommand{\Gb}{\overline{G}\xspace}
+
+
+\newcommand{\A}{\text{\tiny $A$}}
+\newcommand{\B}{\text{\tiny $B$}}
+\newcommand{\C}{\text{\tiny $C$}}
+\def\D{\text{\tiny $D$}}
+\newcommand{\R}{\text{\tiny $R$}}
+\renewcommand\S{\text{\tiny $S$}}
+
+\newcommand{\X}{\text{\tiny $X$}}
+\newcommand{\Y}{\text{\tiny $Y$}}
+\newcommand{\Z}{\text{\tiny $Z$}}
+\newcommand{\W}{\text{\tiny $W$}}
+\newcommand{\N}{\text{\tiny $N$}}
+\newcommand{\T}{\text{\tiny $T$}}
+\newcommand{\XY}{\text{\tiny $XY$}}
+\newcommand{\XZ}{\text{\tiny $XZ$}}
+\newcommand{\YZ}{\text{\tiny $YZ$}}
+\newcommand{\XgY}{\text{\tiny $X|Y$}}
+\newcommand{\YgX}{\text{\tiny $Y|X$}}
+
+\newcommand{\oth}{\text{otherwise}}
+\newcommand{\dlc}{\text{d.l.c}}
+%%%% Bold definitions %%%%%%%%%%%%%%%%
+%%% Matrices
+\newcommand{\bA}{\ensuremath{\bm A}\xspace}
+\newcommand{\bB}{\ensuremath{\bm B}\xspace}
+\newcommand{\bC}{\ensuremath{\bm C}\xspace}
+\newcommand{\bD}{\ensuremath{\bm D}\xspace}
+\newcommand{\bE}{\ensuremath{\bm E}\xspace}
+\newcommand{\bF}{\ensuremath{\bm F}\xspace}
+\newcommand{\bG}{\ensuremath{\bm G}\xspace}
+\newcommand{\bH}{\ensuremath{\bm H}\xspace}
+\newcommand{\bI}{\ensuremath\bm{I}\xspace}
+\newcommand{\bM}{\ensuremath\bm{M}\xspace}
+\newcommand{\bP}{\ensuremath{\bm P}\xspace}
+\newcommand{\bQ}{\ensuremath{\bm Q}\xspace}
+\newcommand{\bR}{\ensuremath{\bm R}\xspace}
+\newcommand{\bPt}{\ensuremath{\widetilde{\bm P}}\xspace}
+
+
+\newcommand{\pt}{\ensuremath{\widetilde p}\xspace}
+
+%%%%%% Greek
+\newcommand{\bal}{\ensuremath\bm{\alpha}\xspace}
+\newcommand{\bbe}{\ensuremath\bm{\beta}\xspace}
+\newcommand{\bga}{\ensuremath\bm{\gamma}\xspace}
+\newcommand{\bla}{\ensuremath\bm{\lambda}\xspace}
+\newcommand{\bpi}{\ensuremath{\bm \pi}\xspace}
+\newcommand{\bmu}{\ensuremath{\bm \mu}\xspace}
+\newcommand{\bphi}{\ensuremath{\bm \phi}\xspace}
+\newcommand{\wpi}{\widehat{\pi}}
+\newcommand{\bpit}{\boldsymbol{\widehat{\pi}}}
+\newcommand{\pit}{\widehat{\pi}}
+
+%%% Vectors
+
+%\renewcommand{\b}[1]{\ensuremath{\boldsymbol{#1}}}
+
+\AtBeginDocument{
+	\renewcommand{\b}[1]{\ensuremath{{\bm{#1}}}}
+}
+
+\newcommand{\ba}{\ensuremath{\bm a}\xspace}
+\newcommand{\bb}{\ensuremath{\bm b}\xspace}
+\newcommand{\bc}{\ensuremath{\bm c}\xspace}
+\newcommand{\bd}{\ensuremath{\bm d}\xspace}
+\newcommand{\be}{\ensuremath{\bm e}\xspace}
+%\newcommand{\bf}{\ensuremath{\bm f}\xspace}
+\newcommand{\bg}{\ensuremath{\bm g}\xspace}
+\newcommand{\bp}{\ensuremath{\bm p}\xspace}
+\newcommand{\bq}{\ensuremath{\bm q}\xspace}
+\newcommand{\br}{\ensuremath{\bm r}\xspace}
+\newcommand{\bx}{\ensuremath{\bm x}\xspace}
+\newcommand{\by}{\ensuremath{\bm y}\xspace}
+
+%\newcommand{\lt}{\ensuremath{\la t}}
+\newcommand{\erd}[2]{\ensuremath{\frac{{#2}^{#1} {t}^{#1-1} e^{- #2 t} }{ (#1-1)! } }}
+\renewcommand{\t}{\ensuremath{\tau}}
+\newcommand{\dt}{\ensuremath{ d\tau}}
+
+
+\newcommand{\bv}{\ensuremath{\bm{v}}}
+\newcommand{\bw}{\ensuremath{\bm{w}}}
+\newcommand{\bu}{\ensuremath{\bm{u}}}
+\newcommand{\bem}{\ensuremath{\bm{m}}}
+
+
+\newcommand{\bo}{\ensuremath{\bm 1}\xspace}
+\newcommand{\one}{\ensuremath{\bm 1}\xspace}
+\newcommand{\zero}{\ensuremath{\bm 0}\xspace}
+%%%%%% SETS %%%%%%%%%%%%%%%%%
+
+\newcommand{\cA}{\ensuremath\mathcal A\xspace}
+\newcommand{\cB}{\ensuremath\mathcal B\xspace}
+\newcommand{\cC}{\ensuremath\mathcal C\xspace}
+\newcommand{\cM}{\ensuremath\mathcal M\xspace}
+\newcommand{\cS}{\ensuremath\mathcal S\xspace}
+\newcommand{\cT}{\ensuremath\mathcal T\xspace}
+\newcommand{\cU}{\ensuremath\mathcal U\xspace}
+
+%%%%% GREEK %%%%%%
+\newcommand{\al}{\ensuremath\alpha\xspace}
+\newcommand{\la}{\ensuremath\lambda\xspace}
+\newcommand{\tht}{\ensuremath\theta\xspace}
+\newcommand{\sig}{\ensuremath\sigma\xspace}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% DOCUMENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{document}
+
+% \pagestyle{empty} %No headings for the first pages.
+
+
+%% Title Page %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Write your text here or include other files.
+
+%% The simple version:
+\title{Epidemic Models with Random Infectious Period}
+\author{Germán Riaño}
+%\date{} %%If commented, the current date is used.
+\maketitle
+
+
+\begin{abstract}
+In this paper we present an extension to the classical SIR epidemic transmission model that uses any general distribution for the length of the infectious period.
+The classical SIR model requires an exponential distribution for this time. We will show how a general distribution can be easily taken into account using the Transient Little Law.
+We present numerical methods to solve in an efficient way. Our numerical experiments show that in the presence of a more realistic distribution the peak of infected individuals will be higher and occur earlier. 
+Conversely, a higher variability distribution will lead to a lower peak that takes longer to dissipate. 
+This finding should have important consequences in public policy.
+We also discuss some extensions to the basic model, to include variants like SEIR and SIS.
+\end{abstract}
+
+
+
+%% Inhaltsverzeichnis %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents %Table of contents
+%\cleardoublepage %The first chapter should start on an odd page.
+
+\pagestyle{plain} %Now display headings: headings / fancy / ...
+
+
+
+%% Chapters %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Write your text here or include other files.
+
+%\input{intro} %You need a file 'intro.tex' for this.
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% ==> Some hints are following:
+
+
+
+\section{Introduction}\label{intro}
+
+In this paper, we discuss extensions to classical models of epidemic transmission under a general distribution for the length of the infectious period.
+
+Consider the classical SIR model. The population is split in three groups: the Susceptible (S) are all individuals in a population that have not been infected; Infectious (I) are those individuals that have acquire the disease and are assumed to be infectious. Finally the Removed (R) are the individual that have either recovered or died, and are assumed to have gained immunity and, therefore, will not fall be infected again.
+The dynamics of the epidemic are described by the following set of Ordinary Differential Equations (ODE).
+
+\begin{subequations}
+	\begin{align}
+		\dot{S}(t) &= -\beta S(t)I(t)/N  \label{eq:Sdot} \\
+		\dot{I}(t) &= \beta S(t)I(t)/N - \gamma I(t) \label{eq:Idot}  \\
+		\dot{R}(t) &= \gamma I(t) \label{eq:Rdot} 
+		\text{Subject to } I(0)=I_0, S(0)=S_0, \text{ and } R(0)=R_0.
+	\end{align}
+\end{subequations}
+
+The term $S(t)I(t)/N$ in equations \eqref{eq:Sdot} and \eqref{eq:Idot} tells us that the new infections come proportional to the number of infected individuals but also the proportion of available individuals ($S/N$). This makes sense: the disease will increase as more individuals are infected, but will be proportional to the probability that an individual has not been yet infected. 
+The term $\gamma I(t)$, however, is problematic. It implies that in the next $Delta t$ any of the infected individuals will recover with the same probability, regardless of how long they acquired the disease.
+A random variable that exhibit this behavior is said to have a \emph{memory-less property}.
+This, in turns, implies that the length of the disease must be follow the exponential distribution, since it is well-known that the only distribution that follows this property \cite{kulk95}. We will show how to incorparate an arbitrary infectious period in the model. The resulting model is not a set of ODE, but it is still easy to compute in a few seconds.
+
+The reminder of the paper is organized as follows: in Section \ref{sc:litrev} we review related work, in \ref{sc:model} we present the main model that incorporates any general distribution for the infectious period, in Section \ref{sc:numerical} we present an algorithm to efficiently solve the model and discuss numerical experiment with diverse distributions; in Section \ref{sc:PH} we present results using Phase-Type distributions, and, finally, in Section \ref{sc:multi} we extend the model to a more general setting with multiple stages with arbitrary duration. The SEIR model would be a particular instance of such a model. 
+
+
+
+\section{Literature Review}\label{sc:litrev}
+
+
+
+\section{SIR Model with Random Infectious Period}\label{sc:model}
+
+In this section we will present a model that generalizes the classical SIR model \eqref{eq:Sdot}-\eqref{Rdot} in a way that distributions for the infectious period other than exponential can be represented.
+Let $N(t)$ represent an stochastic process that counts the cumulative number of new infections up to time $t$. The time $T$ that an individual is infectious will have a general distribution $G(t)\equiv P\{T\leq t\}$. For convinience we will use the survival function $\Gb(t) = 1-G(t)$. Ignoring, for the moment, the individuals that are already infectious at time $0$, the expected number of individuals that are infectious at time $0$ can be according to the Transient Little Law \cite{fral.ea:tll} according to
+\begin{equation}
+	I(t) = \int_0^t \bG(t-\tau) dEN(\tau)   \label{eq:tll}
+\end{equation} 
+The previous equation does not require any particular process for $N(t)$ or the distribution $G(\cdot)$. As in the classical SIR model we will assume that the rate of change of $M(t)$ is given by
+\begin{equation}
+\dot{M}(t) = \beta I(t)S(t)/N
+\label{eq:}
+\end{equation}
+
+
+
+
+
+\section{Numerical Experiments}\label{sc:numerical}
+
+
+
+\section{Epidemic Model with Phase-Type Distributions}\label{sc:PH}
+
+
+\section{A Multi-stage Epidemic Model}\label{sc:multi}
+
+
+
+
+%% <== End of hints
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% BIBLIOGRAPHY AND OTHER LISTS
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% A small distance to the other stuff in the table of contents (toc)
+\addtocontents{toc}{\protect\vspace*{\baselineskip}}
+
+%% The Bibliography
+%% ==> You need a file 'literature.bib' for this.
+%% ==> You need to run BibTeX for this (Project | Properties... | Uses BibTeX)
+
+% \addcontentsline{toc}{chapter}{Bibliography} %'Bibliography' into toc
+%\nocite{*} %Even non-cited BibTeX-Entries will be shown.
+\bibliographystyle{amsalpha} %Style of Bibliography: plain / apalike / amsalpha / ...
+\bibliography{Stochastics,Riano,Epidemics} %You need a file 'literature.bib' for this.
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% APPENDICES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\appendix
+
+\section{Appendix: Computing Expected Values of Piece-wise Linear Functions} \label{app:gamma}
+
+
+\end{document}
+
