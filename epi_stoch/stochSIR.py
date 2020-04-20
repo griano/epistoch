@@ -6,18 +6,18 @@ Created on Sat Apr 11 12:20:32 2020
 """
 
 
-import numpy as np
-import pandas as pd
-import pytest
 import logging
 import math
-from scipy import integrate, optimize, stats, interpolate
+
+import numpy as np
+import pandas as pd
+from scipy import integrate, stats, interpolate
 import matplotlib.pyplot as plt
-from idesolver import IDESolver
-from timeit import timeit
+from tqdm import tqdm
 
-from sSIR.utils.stats import *
+from epi_stoch.utils.stats import loss_function
 
+EPS = 1e-5
 
 # The SIR model differential equations.
 def deriv(t, y, beta, gam):
@@ -71,7 +71,7 @@ def classicalSIR(population=1000,
     R = N - S - I
     return times, S, I, R
 
-def compute_integral(n, delta, S, I, times, survival, pdfs, loss, dist, method="simpson"):
+def compute_integral(n, delta, S, I, times, survival, pdfs, loss, dist, method="loss"):
     """
     Computes 
     int_0^t g(t-x) I(x)S(x) dx
@@ -121,7 +121,7 @@ def stochasticSIR(population=1000,
                   R0 = 0.0,
                   num_days = 160,
                   delta = 1,
-                  method='simpson'):
+                  method='loss'):
     # Total population, N.
     N = population
     dist = disease_time_distribution
@@ -141,8 +141,10 @@ def stochasticSIR(population=1000,
     if pdfs[0] == math.inf:
         pdfs[0] = dist.pdf(dist.ppf(0.01))
     survival = dist.sf(times)
-    loss_func = loss_function(dist)
-    L = loss_func(times)
+    if survival[0] < 1.0 - EPS:
+        logging.warning(f"Survival function does not start in 1:  {survival}")
+    loss_fun = loss_function(dist)
+    loss1 = loss_fun(times)
 
     S = np.empty(num_periods + 1)
     S[:] = np.nan
@@ -150,10 +152,10 @@ def stochasticSIR(population=1000,
     I[:] = np.nan
     S[0] = S0
     I[0] = I0
-    
-    for n in range(0, num_periods):
+    logging.info(f"Computing SIR-G model with {num_periods} periods.")
+    for n in tqdm(range(0, num_periods)):
         S[n+1] = S[n] - delta * beta * S[n] * I[n]
-        integral = compute_integral(n, delta, S, I, times, survival, pdfs, L, dist, method=method)
+        integral = compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method=method)
         # Expected case for exponential variables    
         integral_expon = (gam/beta) * (I[n] - I0 * survival[n])
         logging.debug(f"n={n}, t={n*delta}, integral = {integral}, integral_expon = {integral_expon}")
@@ -173,6 +175,10 @@ def plot_sir(t, S, I, R, N, label, fig=None, linestyle='-'):
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     if fig is None:
         fig = plt.figure(facecolor='w')
+        # use LaTeX fonts in the plot
+        plt.rc('text', usetex=True)
+        plt.rc('font', **{'family':'serif', 'sans-serif':['Palatino']})
+         
         # ax = fig.add_subplot(111, axis_bgcolor='#dddddd', axisbelow=True)
         ax = fig.add_subplot(111, axisbelow=True)
         ax.set_xlabel('Time /days')
@@ -193,14 +199,14 @@ def plot_sir(t, S, I, R, N, label, fig=None, linestyle='-'):
     legend.get_frame().set_alpha(0.5)
     return fig
  
-def plot_RI(S, R, I, N, label, fig=None, linestyle='-'):
+def plot_IR(S, R, I, N, label, fig=None, linestyle='-'):
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     if fig is None:
         fig = plt.figure(facecolor='w')
         # ax = fig.add_subplot(111, axis_bgcolor='#dddddd', axisbelow=True)
         ax = fig.add_subplot(111, axisbelow=True)
         ax.set_xlabel('Susceptibe')
-        ax.set_ylabel('Removed')
+        ax.set_ylabel('Removed/Infected')
         ax.set_ylim(0,1.2)
         ax.set_xlim(0,1.2)
         ax.yaxis.set_tick_params(length=0)
@@ -220,11 +226,17 @@ def plot_RI(S, R, I, N, label, fig=None, linestyle='-'):
 
 def print_array_error(x1, x2, N, name):
     error = np.abs(x1-x2)/N
-    print(f"{name}: max error = {np.max(error)}, avg error = {np.mean(error)}")
+    print(f"{name}: max error = {np.max(error):.2}, avg error = {np.mean(error):.2}")
 
 def print_error(I1, I2, S1, S2, N):
     print_array_error(I1, I2, N, 'I')
     print_array_error(S1, S2, N, 'S')
 
-
+def report_summary(name, S, I, R, N):
+    n = len(R) - 1
+    print(f"Model {name} Summary")
+    print(f"  Total Infected People: {int(R[n]):,d} ({R[n]/N:.2%})")
+    print(f"  Infection Peak: {int(np.max(I)):,d} ({np.max(I)/N:.2%})")
+    print(f"  Peak Day: {int(np.argmax(I)):,d}")
+    
 
