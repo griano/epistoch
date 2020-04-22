@@ -362,15 +362,10 @@ The previous equation ignores the infectious individuals at time 0. Usually, we 
 \label{eq:eqdist}
 \end{equation}
 where $\gami=E(T)$, i.e., $\gamma$ is the parameter of the exponential with same mean. See, e.g., \cite{kulk95}. A random individual among the initial $I_0$ will be still infectious at time $t$ if this residual time is greater than $t$, which occurs with probability $\Ab(t)\equiv 1- A(t)$. 
-It is convenient to write the function  $\Ab(t)$ in terms of the so-called first order loss function $L(t)=\E{(T-t)^+}$ as follows
-\[ \Ab(t) = \gamma \int_t^\infty \Gb(s)ds = \gamma L(t).\]
-The advantage of this representation is that the loss function is known for many distributions, and can be efficiently computed without performing actual integration. See, \eg, \cite[Page 14]{burn.ea.10} and \cite[Appendix C]{zipk00}. This will be used in our numerical experiments later.
 
- 
-
-Therefore, out of the initial $I_0$ infected individuals, the expected value still infectious at time $t$ is given by $I_0\Ab(t)=I_0\gamma L(t)$, and Equation \eqref{eq:tll} is modified as
+Therefore, out of the initial $I_0$ infected individuals, the expected value of the number still infectious at time $t$ is given by $I_0\Ab(t)=I_0\gamma L(t)$, and Equation \eqref{eq:tll} is modified as
 \begin{equation}
-	I(t) = I_0\gamma L(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau.   \label{eq:it}
+	I(t) = I_0\Ab(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau.   \label{eq:it}
 \end{equation}
 In a similar fashion, using a collorary from Transient Little Law, the number removed individuals out f infections that occur after time $0$ can be computed as 
 \[ \beta\int_0^t G(t-\tau) S(\tau)I(\tau)d\tau\]
@@ -382,11 +377,11 @@ Equations \eqref{eq:it} and \eqref{eq:rt} can be used in conjunction with \eqref
 \begin{subequations}
 \begin{align}
 S(t) &= S_0 - \beta\int_0^t  S(\tau)I(\tau)d\tau, \label{eq:st2} \\
-I(t) &= I_0 \gamma L(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau, \label{eq:it2} \\
+I(t) &= I_0 \Ab(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau, \label{eq:it2} \\
 R(t) &= R_0  + I_0A(t) +  \beta\int_0^t G(t-\tau) S(\tau)I(\tau)d\tau.   \label{eq:rt2}
 \end{align}
 \end{subequations}
-Notice that $S(t)+I(t)+R(t)=S_0+I_0+R_0=1.$ We will call this the Integral SIR-G Model.
+Notice that $S(t)+I(t)+R(t)=S_0+I_0+R_0=1.$ We will call this set of equations the Integral SIR-G Model.
 
 \subsection{Integrodifferential SIR-G Model}
 
@@ -404,27 +399,28 @@ Therefore, taking derivatives in equations \eqref{eq:st2}-\eqref{eq:rt2}, we get
 	\begin{align}
 		\dot S(t) &= -\beta S(t)I(t), 
 		\label{eq:Sdot2} \\
-		\dot I(t) &= \phm  \beta  S(t)I(t) - \left[ I_0 \gamma \Gb(t) +  - \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau \right],
+		\dot I(t) &= \phm  \beta  S(t)I(t) - \left[ I_0 \gamma \Gb(t) +  \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau \right],
 		\label{eq:Idot2} \\
-		\dot R(t) &= I_0 \gamma \Gb(t) + \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau.
+		\dot R(t) &= \phm I_0 \gamma \Gb(t) + \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau.
 		\label{eq:Rdot2}
 	\end{align}
 \end{subequations}
-Here we have used $L'(t)=-\Gb(t)$, which  can be seen from \eqref{eq:eqdist}.
+Here we have used $d\Ab(t)/dt=\gamma\Gb(t)$, which  can be seen from \eqref{eq:eqdist}.
 
 
-\subsection{Recovering the Classical SIR with exponential Distributions}
+\subsection{Recovering the Classical SIR with Exponential Distributions}
 
 We finish this section proving the the previous set of equations are equivalent to the classical SIR model \eqref{eq:Sdot}-\eqref{eq:Rdot} when the distribution $G$ is exponential. 
-For the exponential case  $g(t)=\gamma e^{-\gamma t}$ and $\Gb(t)=e^{-\gamma t}$, so $g(t)=\gamma\Gb(t)$. Also, plugging $\Gb(t)$ in the residual distribution in \eqref{eq:eqdist} is exponential, we can see $\Ab(t) = \Gb(t)$. In other words, the residual is also exponential, which would be expected because of the \textit{memory-less} property.
-Now, the terms in braces \eqref{eq:Idot2} can be computed as 
+For the exponential case  $g(t)=\gamma e^{-\gamma t}$ and $\Gb(t)=e^{-\gamma t}$, so $g(t)=\gamma\Gb(t)$. Also, plugging $\Gb(t)$ in the residual distribution in \eqref{eq:eqdist} is exponential, we can see $\Ab(t) = \Gb(t)$. In other words, the residual time is also exponential, which would be expected because of the \textit{memory-less} property.
+Now, the terms in brackets \eqref{eq:Idot2} can be computed as 
 \begin{align}
 I_0 \gamma \Gb(t) + \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau 
-&= \gamma\left[ I_0  \Gb(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau \right]\\
+&= \left[ I_0  \gamma\Gb(t) + \gamma\beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau \right]\\
 &= \gamma\left[ I_0  \Ab(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau \right]\\
-&= \gamma I(t).
+&= \gamma I(t),
 \end{align}
-Plugging this into \eqref{eq:Idot2} and \eqref{eq:Rdot2} we recover the original SIR model, showing, one again, that the model is valid only when the distribution is exponential.
+where the last eqaution comes from \eqref{eq:it2}.
+Plugging this into \eqref{eq:Idot2} and \eqref{eq:Rdot2} we recover the original SIR model (\eqref{eq:Sdot}-\eqref{eq:Rdot}), showing, once again, that the classical SIR model is valid only when the distribution is exponential.
 
 \subsection{Computing Deaths and Recovers Independently}
 
@@ -447,7 +443,7 @@ In this section we discuss algorithms to compute the SIR-G model. We will focus 
 
 \subsection{Simple Forward Computation}
 
-In the most simple algorithm, we dub-divide the time line in intervals of size $\delta$, and compute $S$ and $I$ at hose points, i.e., $S_k=S(\delta_k)$ and $I_n=I(delta_k)$. Discretizising \eqref{eq:Sdot2} and \eqref{eq:Idot2} we get the following computation scheme
+In the most simple algorithm, we dub-divide the time line in intervals of size $\delta$, and compute $S$ and $I$ at hose points, i.e., $S_k=S(\delta_k)$ and $I_n=I(\delta_k)$. Discretizising \eqref{eq:Sdot2} and \eqref{eq:Idot2} we get the following computation scheme
 
 \begin{algorithm}
     \caption{SIR-G algorithm}
@@ -455,7 +451,7 @@ In the most simple algorithm, we dub-divide the time line in intervals of size $
     \begin{algorithmic}[1] % The number tells where the line numbering should start
 		\State	$S_0$ and $I_0$  initial conditions given.
 	    \For{$n \gets 0,1,\ldots$}
-			\State $K_n \gets \int_0^{delta n} g(t-\tau) S(\tau)I(\tau)d\tau$  
+			\State $K_n \gets \int_0^{\delta n} g(t-\tau) S(\tau)I(\tau)d\tau$  
 			\State $S_{n+1} \gets  S_n - \delta\beta S_n I_n$
 			\State $I_{n+1} \gets  I_n + \delta\left[\beta S_n I_n + I_0\gamma\Gb_n + \beta K_n\right]$
 		\EndFor	
@@ -481,11 +477,11 @@ Another way to see this result is this: if the distribution of the infectious ti
 \begin{figure}
 	\centering
 	\begin{subfigure}{.45\textwidth}
-		\includegraphics[width=.8\linewidth]{CovidSIR-comp}
+		\includegraphics[width=.8\linewidth]{DIVOC-SIR-comp.pdf}
 		\caption{$S$, $I$, and $R$ as function of time}
 	\end{subfigure}	
 	\begin{subfigure}{.45\textwidth}
-		\includegraphics[width=.8\linewidth]{CovidIR-comp}
+		\includegraphics[width=.8\linewidth]{DIVOC-IR-comp.pdf}
 		\caption{$R$ and $I$ as function of $S$}
 	\end{subfigure}	
 	\caption{Comparison of classical SIR with SIR-G}
@@ -497,7 +493,12 @@ Another way to see this result is this: if the distribution of the infectious ti
 
 In this section we will use diverse Gamma and Lognormal distributions with various values for the coefficient of variability.
 
-
+\begin{figure}
+	\centering
+	\includegraphics[width=.8\linewidth]{Variance-Analysis.pdf}
+	\caption{SIR-G for different variability levels}
+	\label{fig:var}
+\end{figure}
 
 \section{Epidemic Model with Phase-Type Distributions}\label{sc:PH}
 
@@ -536,7 +537,9 @@ In this section we will use diverse Gamma and Lognormal distributions with vario
 \appendix
 
 \section{Appendix: Computing Expected Values of Piece-wise Linear Functions} \label{app:piecewise}
-
+It is convenient to write the function  $\Ab(t)$ in terms of the so-called first order loss function $L(t)=\E{(T-t)^+}$ as follows
+\[ \Ab(t) = \gamma \int_t^\infty \Gb(s)ds = \gamma L(t).\]
+The advantage of this representation is that the loss function is known for many distributions, and can be efficiently computed without performing actual integration. See, \eg, \cite[Page 14]{burn.ea.10} and \cite[Appendix C]{zipk00}.
 
 \end{document}
 
