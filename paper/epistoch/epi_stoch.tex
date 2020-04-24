@@ -1,6 +1,4 @@
-%% Based on a TeXnicCenter-Template by Tino Weinkauf.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% arara: pdflatex
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% HEADER
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -25,8 +23,8 @@
 \usepackage[sc,osf,slantedGreek]{mathpazo}
 \linespread{1.08}        % Palatino needs more leading
 
-\usepackage{helvet}
-\usepackage{courier}
+% \usepackage{helvet}
+% \usepackage{courier}
 %
 \renewcommand{\fontsubfuzz}{0.44pt}
 
@@ -67,7 +65,10 @@
 \usepackage{xspace}
 \usepackage{natbib}
 \usepackage{algpseudocode,algorithm}
-\usepackage{urwchancal}
+\usepackage{urwchancal} % changes cal font
+\usepackage{array}
+\usepackage{mathtools}
+% \usepackage{siunitx}
 
 \lstset{language=python}
 \newcommand{\floor}[1]{\left[#1\right]}
@@ -173,6 +174,7 @@
 \newcommand{\bR}{\ensuremath{\bm R}\xspace}
 \newcommand{\bPt}{\ensuremath{\widetilde{\bm P}}\xspace}
 
+\newcommand{\bAi}{\ensuremath{\bm A}^{-1}\xspace}
 
 \newcommand{\pt}{\ensuremath{\widetilde p}\xspace}
 
@@ -255,7 +257,7 @@
 \newcommand{\betaN}{\ensuremath\frac{\beta}{N}\xspace}
 \newcommand{\phm}{\ensuremath\phantom{-}\xspace}
 \newcommand{\Ro}{\ensuremath\mathcal{R}_0\xspace}
-
+\newcommand{\Ri}{\ensuremath{R}_\infty\xspace}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -315,8 +317,8 @@ The dynamics of the epidemic are described by the following set of Ordinary Diff
 \begin{subequations}
 	\begin{align}
 		\dot{S}(t) &= -\beta S(t)I(t)  \label{eq:Sdot} \\
-		\dot{I}(t) &= \beta S(t)I(t) - \gamma I(t) \label{eq:Idot}  \\
-		\dot{R}(t) &= \gamma I(t), \label{eq:Rdot}
+		\dot{I}(t) &= \phm\beta S(t)I(t) - \gamma I(t) \label{eq:Idot}  \\
+		\dot{R}(t) &= \phm\gamma I(t), \label{eq:Rdot}
 	\end{align}
 \end{subequations}
 subject to initial conditions $I(0)=I_0$, $S(0)=S_0$, and $R(0)=R_0$. The previous quantities are measured as percentage of the total population, so $S_0+I_0+R_0=S(t)+I(t)+R(t)=1$.
@@ -356,12 +358,12 @@ Therefore, \eqref{eq:tll0} becomes
 	I(t) = \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau.   \label{eq:tll}
 \end{equation}
 
-The previous equation ignores the infectious individuals at time 0. Usually, we will not know how long they have been infectious. The natural assumption will be to assume that, for a random individual, time $t=0$ is a random instant during the length of $T$, so the remaining time will follow the equilibrium residual distribution, given by
+The previous equation ignores the infectious individuals at time 0. Usually, we will not know how long they have been infectious. The natural assumption will be to assume that, for a random individual, time $t=0$ is a random instant during the length of $T$, so the remaining time will follow the equilibrium residual distribution (see, e.g., \cite{kulk95}), given by
 \begin{equation}
 	A(t) =  \frac{\int_0^t[1-G(s)]ds}{\Exp{[T]}} = \gamma \int_0^t \Gb(s)ds,
 \label{eq:eqdist}
 \end{equation}
-where $\gami=E(T)$, i.e., $\gamma$ is the parameter of the exponential with same mean. See, e.g., \cite{kulk95}. A random individual among the initial $I_0$ will be still infectious at time $t$ if this residual time is greater than $t$, which occurs with probability $\Ab(t)\equiv 1- A(t)$. 
+where $\gami=E(T)$, i.e., $\gamma$ is the parameter of the exponential with same mean. A random individual among the initial $I_0$ will be still infectious at time $t$ if this residual time is greater than $t$, which occurs with probability $\Ab(t)\equiv 1- A(t)$. 
 
 Therefore, out of the initial $I_0$ infected individuals, the expected value of the number still infectious at time $t$ is given by $I_0\Ab(t)=I_0\gamma L(t)$, and Equation \eqref{eq:tll} is modified as
 \begin{equation}
@@ -385,7 +387,7 @@ Notice that $S(t)+I(t)+R(t)=S_0+I_0+R_0=1.$ We will call this set of equations t
 
 \subsection{Integrodifferential SIR-G Model}
 
-The SIR-G model can be also presented as integro-differential form, and that is the way we used for computation in Sections \ref{sc:algorithm} and \ref{sc:numerical}. We will take derivatives of Equations \eqref{eq:st2}-\eqref{eq:rt2}. The derivative of the integral can be computed using Leibnitz rule, and using $\Gb(0)=1-G(0)=1$, as follows
+The SIR-G model can be also presented as integro-differential form, and that is the way we used for computation in Sections \ref{sc:algorithm} and \ref{sc:numerical}. We will take derivatives of Equations \eqref{eq:st2}-\eqref{eq:rt2}. The derivative of the integral can be computed using Leibniz rule, and using $\Gb(0)=1-G(0)=1$, as follows
 \begin{align*}
 	\frac{d}{dt}\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau
 	&= \left. \Gb(t-\tau) S(\tau)I(\tau) \right|_{\tau=t}
@@ -419,7 +421,7 @@ I_0 \gamma \Gb(t) + \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau
 &= \gamma\left[ I_0  \Ab(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau \right]\\
 &= \gamma I(t),
 \end{align}
-where the last eqaution comes from \eqref{eq:it2}.
+where the last equation comes from \eqref{eq:it2}.
 Plugging this into \eqref{eq:Idot2} and \eqref{eq:Rdot2} we recover the original SIR model (\eqref{eq:Sdot}-\eqref{eq:Rdot}), showing, once again, that the classical SIR model is valid only when the distribution is exponential.
 
 \subsection{Computing Deaths and Recovers Independently}
@@ -443,7 +445,7 @@ In this section we discuss algorithms to compute the SIR-G model. We will focus 
 
 \subsection{Simple Forward Computation}
 
-In the most simple algorithm, we dub-divide the time line in intervals of size $\delta$, and compute $S$ and $I$ at hose points, i.e., $S_k=S(\delta_k)$ and $I_n=I(\delta_k)$. Discretizising \eqref{eq:Sdot2} and \eqref{eq:Idot2} we get the following computation scheme
+In the most simple algorithm, we dub-divide the time line in intervals of size $\delta$, and compute $S$ and $I$ at hose points, i.e., $S_k=S(\delta_k)$ and $I_n=I(\delta_k)$. Discretizing \eqref{eq:Sdot2} and \eqref{eq:Idot2} we get the computation scheme in Algorithm \ref{al:forward}.
 
 \begin{algorithm}
     \caption{SIR-G algorithm}
@@ -456,6 +458,7 @@ In the most simple algorithm, we dub-divide the time line in intervals of size $
 			\State $I_{n+1} \gets  I_n + \delta\left[\beta S_n I_n + I_0\gamma\Gb_n + \beta K_n\right]$
 		\EndFor	
     \end{algorithmic}
+    \label{al:forward}
 \end{algorithm}
 
 
@@ -491,19 +494,244 @@ Another way to see this result is this: if the distribution of the infectious ti
 
 \subsection{Impact of Variability in SIR-G}
 
-In this section we will use diverse Gamma and Lognormal distributions with various values for the coefficient of variability.
+In this section we will use diverse Gamma and Log-normal distributions with various values for the coefficient of variability. We can see that a higher variability causes a lower and later peak as compared to the classical SIR model. Conversely if variability is lower the peak comes higher and earlier. The higher peak is obtained with a constant time for the infectious period (solid blue line in the graph.)
 
 \begin{figure}
 	\centering
 	\includegraphics[width=.8\linewidth]{Variance-Analysis.pdf}
-	\caption{SIR-G for different variability levels}
+	\caption{SIR-G for different variability levels and diverse distributions}
 	\label{fig:var}
 \end{figure}
 
 \section{Epidemic Model with Phase-Type Distributions}\label{sc:PH}
 
+In this section, we will build SIR-G model for the particular case when $T$ has a Phase-Type distribution (PH)\cite{neut81,lato.rama99}. Our interest in PH distributions is two-fold. First, it can be shown that the family of PH distributions is dense, in the sense that any positive random variable can be approximated by a PH distribution \cite{neut81}.
+Also, the family of PH distributions is closed under many operations. In particular, as we will see, the residual equilibrium distribution in \eqref{eq:eqdist} is a PH distribution. To build a PH distribution imagine a Continuous Time Markov Chain (CTMC) with states $\{0,1,\ldots,n\}$ where the state $0$ is an absorbing state, and generator matrix, and initial condition vector given by
+\begin{align}
+	&\begin{bmatrix}
+		\ba  & \bA \\
+		0    & {\bm{0}}
+	\end{bmatrix}, 	\label{eq:generator}\\ 
+	&\begin{bmatrix}
+		 0 & \bal
+	\end{bmatrix}.
+\end{align}
+Here $\bA$ is an $n\times n$ matrix that correspond to the transient part of CTMC and $\bal$ the row vector of initial conditions. This probabilities must add up to 1, so $\bal\one=1$, where $one$ a column vector of ones. The behavior of a PH can be thought of this way: a Markov chain chooses one initial state (or phase) with probabilities $\alpha_i$,  then moves among phases according to rates $A_{ij}$ and it is absorbed with rate $a_i$. Since the matrix in \eqref{eq:generator} is a generator for a CTMC the rows must add up to zero, and hence 
+\[ \ba = -\bA\one\]
+It can be shown that the CDF, and PDF for the time until absorption, \ie the PH distribution, are given by
+\begin{equation}
+G(t) = 1 - \bal e^{\bA t} \one \quad t>0 
+\end{equation}
+From this, we can derive the PDF, expected value, and equilibrium distribution as 
+\begin{gather}
+g(t) =  -\bal e^{\bA t} \bA\one=\ba e^{\bA t} \ba \quad t>0 \\
+\gamma^{-1} = \E{T} = - \bal \bA^{-1} \one \quad t>0 \\
+A(t) =\gamma \int_0^t[\Gb(\tau)d\tau] = 1 - \bal'e^{\bA t} \one  \quad t>0 
+      \quad  \text{ with }  \bal'=-\gamma\bal \bA^{-1}.
+\end{gather}
+Notice that the residual equilibrium distribution is also a PH (it can be shown that $\bal'\geq 0$ and $\bal'\one=1$.). Typical examples of PH distributions include the Exponential, Erlang and Hyper-exponential. In Table \ref{tb:phexamples} we show the corresponding representation.
+
+\newsavebox{\ErlangMat} 
+\savebox{\ErlangMat}{%
+	$\displaystyle%
+		\begin{bmatrix}
+		-\la & \la   & 0      &         &  0     \\
+		   0 & \la   & -\la   &         &  0     \\
+		     &       & \ddots & \ddots  & \cdots \\
+		   0 & \dots &        &  -\la   &  \la   \\ 
+		   0 & \dots &        &  0      & -\la 
+		\end{bmatrix}
+	$
+}
+\newsavebox{\HyperExpMat} 
+\savebox{\HyperExpMat}{%
+	$\displaystyle%
+		\begin{bmatrix}
+		-\la_1 &  0      & \cdots   &  0      \\
+		   0   & -\la_2  &          &  0      \\
+		\vdots &         & \ddots   &  \vdots \\
+		   0   & \dots   &          & -\la_n 
+		\end{bmatrix}
+	$
+}
+
+
+\newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\begin{table}
+	\centering
+	\begin{tabular}{l|llP{.4\textwidth}}
+		Distribution                  & PDF                                 & $\bal$              &  $ \bA $ \\
+		\hline \\
+		Exponential($\la$)            & $\la e^{-\la t}$                    &  [1]                &  $\displaystyle [-\la] $  \\
+		Erlang($n$,$\la$)             & $\frac{\la^nt^{n-1}e^{-\la t}}{n!}$ & $[1,0,\ldots,0]$    &  \usebox{\ErlangMat}  \\  
+		Hyper-exponential($p$, $\la$) & $\sum_i \la_i e^{-\la_i t}$      & $[p_1, p_2,\ldots,p_n]$&  \usebox{\HyperExpMat}
+	\end{tabular}
+	\caption{Some common examples of PH distributions.}
+	\label{tb:phexamples}
+\end{table}
+
+
+
+The phases in the PH distribution do not necessarily have a physical interpretation. They can come as a consequence of the data fitting process. Plugging these results in \eqref{eq:it}, we get
+\begin{align}
+	I(t) &= I_0\Ab(t) + \beta\int_0^t \Gb(t-\tau) S(\tau)I(\tau)d\tau.  \notag \\
+		 &= I_0\bal'e^{\bA t} \one     + \beta\int_0^t \bal e^{\bA (t-\tau)} \one   S(\tau)I(\tau)d\tau.  \notag \\
+		 &= \left[ I_0\bal'e^{\bA t}   + \beta\int_0^t \bal e^{\bA (t-\tau)}    S(\tau)I(\tau)d\tau \right] \one \notag\\
+		 &= \bx(t) \one,
+\end{align}
+where $\bx(t)$ is the equation inside the braces; it is a \emph{row} vector whose $i$-th component represent the number of infected individuals currently in phase $i$, and $I(t)= \bx(t) \one$ is just the sum. We can take the derivative of $\bx(t)$, using Leibniz rule, to get
+\begin{align}
+	\dot \bx(t) 
+	&= \frac{d}{dt} \left[I_0\bal'e^{\bA t}  + \beta\int_0^t \bal e^{\bA (t-\tau)}    S(\tau)I(\tau)d\tau \right] \notag\\		 
+	&=  I_0\bal'e^{\bA t}\bA           + \beta S(t)I(t)\bal + \beta\int_0^t \bal e^{\bA (t-\tau)} \bA   S(\tau)I(\tau)d\tau \notag\\		 
+	&=  + \beta S(t)I(t)\bal + \left[I_0\bal'e^{\bA t}            + \beta\int_0^t \bal e^{\bA (t-\tau)}    S(\tau)I(\tau)d\tau \right]\bA \notag\\		 
+	&=  + \beta S(t)\bx(t)\one + \bx(t)\bA \notag\\		 
+\end{align}
+
+With similar manipulation it is easy to show that $\dot R(t)=-\bx(t)\bA=\bx(t)\ba$. 
+Therefore, for the case when $G$ is a PH distribution, we can build anew model that we will call SIR-PH. The equivalent of equations \eqref{eq:st2}-\eqref{eq:rt2} becomes
+\begin{subequations}
+	\begin{align}
+		\dot S(t)   &=   - \beta S(t)\bx(t)\one,                    \label{eq:Sdot_ph}   \\
+		\dot \bx(t) &= \phm\beta S(t)\bx(t)\one\bal + \bx(t)\bA,    \label{xdot_ph}   \\
+		\dot R(t)   &= \phm\bx(t) \ba,                              \label{Rdot_ph}
+	\end{align}
+\end{subequations}
+subject to initial conditions $S(0)=S_0$, $\bx(0)=I_0\bal'$ and $R(0)=R_0$.
+This model will have more equations than the original SIR-G, but potentially it can be easier to solve since it is an ODE and there will be no need to compute integrals. Notice the resemblance with the original SIR in equations \eqref{eq:Idot}-\eqref{eq:Rdot}. Of course the classical SIR will be a particular case when $\ba=-\bA=\gamma$. Or, in other words, we can say this model captures a stage dependent recovery rate. Another advantage is that this representation allows us to limit behavior of the system, but we will delay that after the next section.
+
 
 \section{A Multi-stage Epidemic Model}\label{sc:multi}
+
+In this section we generalize the SIP-PH model. Assume that an infected individual goes through different stages, like in the previous model, and once he or she is infected it would evolve according to a CTMC characterized by $\bA$, until eventually is removed from stage $i$ with rate $a_i$. However, we will assume that there is infection rate, $\beta_i$, that might be different for the different stages (for example, there might be an incubation stage where the individual has been exposed but is not yet contagious). The number of new infectious generated by stage $i$ is given by
+\[ \sum_i \beta_i S(t) x_i(t) = S(t)\bx(t)\bbe, \]
+where $\bbe$ is a \emph{column} vector with the different rates. This new infectious individual land on stage $j$ with probability $\alpha_j$, as before, so the rate of new infected to stage $i$ is given by $S(t)\bx(t)\bbe\bal$. We now replace this infectious dynamics in \eqref{eq:Sdot_ph}-\eqref{Rdot_ph}, to get the following model that we will call SIR-PHG
+\begin{subequations}
+	\begin{align}
+	\dot S(t)   &=   -  S(t)\bx(t)\bbe,                         \label{eq:Sdot_phg}   \\
+	\dot \bx(t) &= \phm S(t)\bx(t)\bbe\bal + \bx(t)\bA,         \label{eq:xdot_phg}   \\
+	\dot R(t)   &= \phm\bx(t) \ba,                              \label{eq:Rdot_phg}
+	\end{align}
+\end{subequations}
+This model can be generalized even further by replacing $\bbe\bal$ by a matrix $\bB$ such that  $B_{ij}$ represent the rate of contagion by individuals $i$ that cause an infection that starts in $j$.
+
+\subsection{SEIRD-PH Model}
+The fact that the evolution of the disease uses a CTMC might seem overly restrictive. However that is not the case. As an illustration consider a $SEIRD$ model. Susceptible individuals  are infected at rate $\beta$ at which point they are considered \emph{exposed} but are not yet infectious. 
+They remain exposed during a time $T_e$ that has distribution $PH(\bal_e,\bA_e)$ after which they will be infectious. With probability $p_d$ the individuals would die after a time $T_d$ that is $PH(\bal_d, \bA_d)$, and with probability $p_r=a-p_d$ they will recover, after a time $T_r$ that is $PH(\bal_r, \bA_r)$. 
+This model can easily be placed in the formalism of equations  \eqref{eq:Sdot_phg}-\eqref{eq:Rdot_phg}. The total time will be either $T_e+T_r$ if the person recovers or $T_e+T_d$. Using the operations for mixtures and sum of PH random variables \cite{lato.rama99}, the matrix $\bA$ and initial conditions $\bal$ will be given by
+\newcolumntype{M}[1]{>{\centering\arraybackslash$}p{#1}<{$}}
+\newlength{\mycol}
+\setlength{\mycol}{.12\linewidth}
+\newcommand{\mypattern}{}
+\begin{align*}
+\bA &= 
+	\left[
+	\begin{array}{@{}*{3}{M{\mycol}}@{}}
+	\bA_e  & p_d\ba_e\bal_d  & p_r\ba_e\bal_r  \\
+	       & \bA_d           &                 \\
+	       &                 &   \bA_r   
+	\end{array}
+	\right]\\
+\bal &=	
+	\left[
+	\begin{array}{@{}*{3}{M{\mycol}}@{}}
+	\bal_e &   &  
+	\end{array}
+	\right]\\
+\bbe' &= 	
+	\left[
+	\begin{array}{@{}*{3}{M{\mycol}}@{}}
+	      & \beta \one' &  \beta \one'
+	\end{array}
+	\right]
+\end{align*}
+The empty spaces denote matrix or vectors of zeros of the appropriate size. 
+
+
+\section{Limit Behavior of SIR-G Models}
+
+In the classical SIR model the percentage of individuals that ever get infected can be obtained by finding the value $\Ri$ that solves the following equation \cite{chas09}
+\[ 1-\Ri - S_0e^{\Ro \Ri}=0.\]
+This value is very important for public policy, because it can be used to estimate the number of people that would eventually die.
+
+We will know show that in the SIR-G, SIR-G and SIR-PHG the same equation applies. We will prove it for the SIR-PHG model. The SIR-PH will be a particular case. And, since any distribution can be approximated with a PH distribution, then the result will also hold for the SIR-G model.
+
+From \eqref{eq:Rdot_phg}, we have
+\[ \dot R(t)  = \bx(t) \ba = -\bx(t) \bA\one = \dot\br(t) \one,  \]
+where $\dot\br(t)\equiv-\bx(t) \bA$. Since $\bA$ always has an inverse, then $\bx(t)=-\dot\br(t)\bAi$. Plugging this into \eqref{eq:Sdot_phg}, we get
+\[ \frac{\dot S(t)}{S(t)}   =    \dot\br(t)\bAi\bbe. \]
+We can think of $S$ as a function of $\br$, so integrating both sides we get
+\begin{equation}\label{eq:S_r}
+	S(\br) = S_0 e^{\br\bAi\bbe}. 
+\end{equation}
+In the limit, $S(\br)\rightarrow 1-\Ri$, since there will be no infectious individuals left, so 
+\begin{equation}\label{eq:S_ri}
+1-\Ri = S_0 e^{\br\bAi\bbe}
+\end{equation} 
+To analyze the behavior of $\br$ in the limit, write the vector $\bx(t)$ as
+\[  \bx(t) = I(t)\bpi(t), \]
+where the $i$-th component of $\bpi(t)$ is the fraction of infectious individuals currently in phase $i$.
+In the limit, that vector goes to a vector $\bpi$ that is the steady state solution of a CTMC with generator given by $\bQ=( \bA + \bal\ba)$.
+This process is built assuming that upon absorption from rate $i$ (with rate $a_i$) a new phase $j$ is selected with probability $\alpha_j$. See \citep{lato.rama99}. 
+In other words, $\bpi$ is the solution to
+\begin{equation}
+	 \bpi( \bA + \ba\bal) = \zero,  \qquad  \bpi=\one . \label{eq:pi_sys}
+\end{equation}
+If you build a renewal process with time between arrivals $PH(\ba,\bA)$, then the long term rate of arrivals is $\gamma=1/\E{T}$. It can also computed as $\gamma = \bpi\ba$, since it can be seen a long term reward in a Markov process with reward vector $\ba$. Using \eqref{eq:pi_sys}, we can establish these two equations that will be used in the sequel
+\begin{gather}
+   \bpi \bA  = \bpi \ba\bal    \label{eq:ph_res1},\\
+  \gamma^{-1} \bpi   = \bal\bAi \label{eq:ph_res2}.
+\end{gather}  
+
+Using this machinery, in the limit we have 
+\begin{align*}
+	\dot\br(t) 
+		&= -\bx(t)\bA \\
+		&= -I(t)\bpi(t)\bA.
+\end{align*}
+Now, $\dot R(t)=\dot\br(t)\one=-I(t)\bpi(t)\bA\one=I(t)\bpi(t)\ba$, so, using \eqref{eq:ph_res1},
+\[\dot\br(t)/\dot R(t) = -\bpi(t)\bA /(\bpi(t)\ba) \quad \rightarrow \quad -\bpi\bA /(\bpi\ba) = \bal. \]
+In the limit $\br(t)$ will have the same direction as $\dot\br(t)$, so 
+\[  \br_\infty \rightarrow R_\infty \bal.  \]
+Plugging this into \eqref{eq:S_r} we get
+\[ 1-\Ri = S_0 \exp\left[{\Ri\bal\bAi\bbe}\right]. \]
+Finally, notice that from \eqref{eq:ph_res2}, $\bal\bAi\bbe=\gamma^{-1}\bpi\bbe$. Putting all together, in \eqref{eq:S_ri} we get the desired result
+\[ 1-\Ri - S_0e^{\Ro \Ri}=0,\]
+where
+\[\Ro \equiv \tilde{\beta}/\gamma, \text{ and } \tilde{\beta}\equiv \bpi\bbe. \] 
+Here $\tilde{\beta}$ can be interpreted as a long-term weighted average infection rate. Notice that in the SIR-PH model $\bbe \beta\one$, and $\Ro =\beta/\gamma$, as in the classic SIR. This shows that SIR-G model will behave in the long term identically to the classical SIR. 
+
+
+\subsection{Other Generalizations}
+
+So far in this paper we presented generalizations of the SIR model. However, it should be realized that the techniques presented  can be generalized to many other models like SIS, etc.
+
+For example, consider a SIS model. In such a model, infectious individuals always recover and become susceptible again. Then an SIS-G model in integro-differential form would be
+\begin{subequations}
+	\begin{align}
+		\dot S(t) &= -\beta S(t)I(t) + \left[ I_0 \gamma \Gb(t) + \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau\right]
+		\label{eq:Sdot_sis} \\
+		\dot I(t) &= \phm  \beta  S(t)I(t) - \left[ I_0 \gamma \Gb(t) +  \beta\int_0^t g(t-\tau) S(\tau)I(\tau)d\tau \right],
+		\label{eq:Idot_sis}
+	\end{align}
+\end{subequations}
+subject to $S(0)=S_0$ and $I(0)=I_0$. Since $I(t)+S(t)=1$ this model can be converted to a single function, but it is not obvious that doing that you could obtain an analytical solution as in the classical SIS. 
+Using PH distributions, the equivalent model would be
+\begin{subequations}
+	\begin{align}
+		\dot S(t)   &=   - \beta S(t)\bx(t)\one     + \bx(t)\ba     \label{eq:Sdot_sis_ph}   \\
+		\dot \bx(t) &= \phm\beta S(t)\bx(t)\one\bal + \bx(t)\bA,    \label{eq:xdot_sis_ph}   
+	\end{align}
+\end{subequations}
+subject to $\bx(0) = I_0\bal'$ and $S(0)=S_0.$
+Again, the model can be written only in terms of $bx(t)$ only, since $S(t)=1-\bx(t)\one$.
+We did not explore the numerical properties of these type of models.
+
+
+
+
+
 
 
 
@@ -537,9 +765,23 @@ In this section we will use diverse Gamma and Lognormal distributions with vario
 \appendix
 
 \section{Appendix: Computing Expected Values of Piece-wise Linear Functions} \label{app:piecewise}
-It is convenient to write the function  $\Ab(t)$ in terms of the so-called first order loss function $L(t)=\E{(T-t)^+}$ as follows
-\[ \Ab(t) = \gamma \int_t^\infty \Gb(s)ds = \gamma L(t).\]
+
+In this section we will establish an efficient formula to compute the expected value of a piece-wise linear function  in terms  of the survival function, $\Gb(t) = P\{T >t\}$ and the first order loss function $L(t)=\E{(T-t)^+}$.
 The advantage of this representation is that the loss function is known for many distributions, and can be efficiently computed without performing actual integration. See, \eg, \cite[Page 14]{burn.ea.10} and \cite[Appendix C]{zipk00}.
+
+Split the time line in time $0\equiv t_0 < t_1 < \cdots$
+Consider a piecewise linear function given by
+%\[  f(t) = 
+%	\begin{cases} 
+%		b_i + m_i (t - t_i)   & \text {for $t_{i-1} \leq t \< t_i } \\
+%		0 & \text{otherwise}
+%	\end{cases} 
+%\]
+
+
+
+It is convenient to write the function  $\Ab(t)$ in terms of the  first order loss function $L(t)=\E{(T-t)^+}$ as follows
+\[ \Ab(t) = \gamma \int_t^\infty \Gb(s)ds = \gamma L(t).\]
 
 \end{document}
 
