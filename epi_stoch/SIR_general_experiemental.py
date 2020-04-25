@@ -111,6 +111,12 @@ def stochasticSIR2(population=1000,
     return pd.DataFrame(data={'Day':days, 'S': S, 'I':I,'R': R}).set_index('Day')
 
 
+
+
+
+
+
+
 def residual(x, S0, I0, beta, num_periods, delta, dist):
     S, I = np.split(x, 2)
     SI  = S*I
