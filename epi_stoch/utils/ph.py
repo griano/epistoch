@@ -9,7 +9,11 @@ import numpy as np
 from numpy import matlib as ml
 from scipy.special import binom
 from scipy.stats import rv_continuous, expon, gamma
-from butools.ph import CheckPHRepresentation, CdfFromME, PdfFromME, MomentsFromME
+from butools.ph import CheckPHRepresentation, CdfFromME, PdfFromME, MomentsFromME, CdfFromPH, PdfFromPH, MomentsFromPH
+import butools
+
+butools.verbose = True
+butools.check = True
 
 class PhaseTypeGen(rv_continuous):
     
@@ -17,20 +21,22 @@ class PhaseTypeGen(rv_continuous):
         alpha = ml.mat(alpha)
         A = ml.mat(A)
         CheckPHRepresentation(alpha, A, prec)
-        super(PhaseTypeGen, self).__init__(momtype=1, a=None, b=None, xtol=1e-14,
-                 badvalue=None, name=None, longname=None,
+        super(PhaseTypeGen, self).__init__(momtype=1, a=0, b=None, xtol=1e-14,
+                 badvalue=None, name="phase", longname=None,
                  shapes=None, extradoc=None, seed=None)
         self.alpha = alpha
         self.A = A
         
     def _cdf(self, x):
-        return  CdfFromME (self.alpha, self.A, x)
+        return  CdfFromPH(self.alpha, self.A, x)
         
     def _pdf(self, x):
-        return PdfFromME (self.alpha, self.A, x)
+        return PdfFromPH(self.alpha, self.A, x)
     
-    def _stats(self, *args, **kwds):
+    def _stats(self):
         # Mean(‘m’), variance(‘v’), skew(‘s’), and/or kurtosis(‘k’).
+        alpha = self.alpha; A = self.A
+        print(f"alpha = {alpha}, A = {A}.")
         moments = MomentsFromME(self.alpha, self.A, 4)
         moments = np.concatenate(( [1.0], moments))
         mean = moments[1]
@@ -49,7 +55,7 @@ def test_identical(dist1, dist2):
     print('  Testing stats')
     np.testing.assert_allclose(dist1.stats(moments='mvsk'), dist2.stats(moments='mvsk'))
     print('  Testing CDF')
-    p1 = np.linspace(0.0,1.0)
+    p1 = np.linspace(0.0, 0.99)
     x1 = dist1.ppf(p1)
     p2 = dist2.cdf(x1)
     np.testing.assert_allclose(p1, p2)
@@ -69,5 +75,19 @@ def test_ph_expo():
         print(f"Testing {name}")
         test_identical(exp, dist)
     
+def test_ph_gamma():
+    lam = 20.
+    n = 2
+    gam = gamma(a=n, scale = 1/lam)
+    a = [1.0, 0.0]
+    A = [[-lam, lam], [0, -(lam)]]
+    dists = dict()
+    dists['np'] = phase(alpha=np.array(a), A =np.array(A) )
+    dists['ml'] = phase(alpha=ml.mat(a), A =ml.mat(A) )
+    for name, dist in dists.items():
+        print(f"Testing {name}")
+        test_identical(gam, dist)
+
 if __name__ == "__main__":
-     test_ph_expo()
+    test_ph_expo()
+    test_ph_gamma()
