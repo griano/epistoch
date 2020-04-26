@@ -134,6 +134,10 @@ def avg_recovery_rate(dist):
     return result
 
 
+###############################
+# TEST: To be moved later
+###############################
+
 def test_constant():
     x = constant()
     assert 0 == x.mean()
