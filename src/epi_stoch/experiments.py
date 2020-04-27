@@ -6,17 +6,16 @@ Created on Wed Apr 15 15:34:26 2020
 """
 
 import logging
-import scipy
-import numpy as np
 import os
-
-import matplotlib.pyplot as plt
 from timeit import timeit
 
+import matplotlib.pyplot as plt
+import numpy as np
+import scipy
 
 import epi_stoch.utils as utils
-from epi_stoch.SIR_general import classicalSIR, stochasticSIR, print_error, report_summary
-from epi_stoch.utils.plotting import plot_sir, plot_IR 
+from epi_stoch.SIR_general import classicalSIR, print_error, report_summary, stochasticSIR
+from epi_stoch.utils.plotting import plot_IR, plot_sir
 
 
 def performance_test(N):   

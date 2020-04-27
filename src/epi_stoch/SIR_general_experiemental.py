@@ -8,15 +8,23 @@ Created on Sun Apr 12 16:50:30 2020
 import logging
 import math
 
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-from scipy import integrate, stats, interpolate
-import matplotlib.pyplot as plt
+from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
-from epi_stoch.SIR_general import compute_integral, classicalSIR, deriv, EPS, get_array_error, print_error, stochasticSIR
-from epi_stoch.utils.stats import loss_function
 import epi_stoch.utils as utils
+from epi_stoch.SIR_general import (
+    EPS,
+    classicalSIR,
+    compute_integral,
+    deriv,
+    get_array_error,
+    print_error,
+    stochasticSIR,
+)
+from epi_stoch.utils.stats import loss_function
 
 
 def deriv2(t, y, beta, gam, I0, times, delta, S_guess, I_guess, survival, pdfs, loss1, dist, method):

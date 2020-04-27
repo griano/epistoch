@@ -5,21 +5,19 @@ Created on Sun Apr 26 11:43:11 2020
 @author: Germán Riaño, PhD
 """
 import logging
-import math
 
-import pytest
+import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
+import pytest
 from numpy import matlib as ml
-from scipy import integrate, stats, interpolate, linalg
+from scipy import integrate, interpolate, linalg, stats
 from tqdm import tqdm
-from pyphase.ph import ph_expon, ph_erlang
-import matplotlib.pyplot as plt
 
+from epi_stoch.SIR_general import classicalSIR, print_error, stochasticSIR
+from epi_stoch.utils.plotting import plot_IR, plot_sir
 from epi_stoch.utils.stats import loss_function
-from epi_stoch.SIR_general import classicalSIR, stochasticSIR, print_error
-
-from epi_stoch.utils.plotting import plot_sir, plot_IR 
+from pyphase.ph import ph_erlang, ph_expon
 
 EPS = 1e-5
 
@@ -31,18 +29,12 @@ def to_array(S, x):
 
 # The SIR-PH model differential equations.
 def deriv(t, y, beta, n, alpha, A, a):
-    # print(f'received y={y}')
     S, x = np.split(y, [1])
     x = ml.mat(x)
     x.reshape(1,n)
-    # print(f'S={S}, x={x}, type x: {type(x)}, shape x={x.shape} ')
     x_beta = (x @ beta)
     dSdt = - S * x_beta
     dxdt =   S * (x @ beta @ alpha) + x @ A
-    dSdt = np.array(dSdt).flatten()
-    dxdt = np.array(dxdt).flatten()
-    df = np.concatenate((dSdt, dxdt))
-    # print(f'Returning df={df}, type {type(df)}')
     return to_array(dSdt, dxdt)
 
 def sir_phg(population=1000, 

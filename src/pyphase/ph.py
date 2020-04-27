@@ -8,10 +8,10 @@ Created on Sat Apr 25 11:55:02 2020
 import numpy as np
 from numpy import matlib as ml
 from scipy.special import binom
-from scipy.stats import rv_continuous, expon, gamma
-from butools.ph import CheckPHRepresentation, CdfFromPH, PdfFromPH, MomentsFromPH
-import butools
+from scipy.stats import expon, gamma, rv_continuous
 
+import butools
+from butools.ph import CdfFromPH, CheckPHRepresentation, MomentsFromPH, PdfFromPH
 from pyphase.testing import assert_dist_identical, mix_rv
 
 butools.verbose = False

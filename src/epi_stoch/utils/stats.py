@@ -5,12 +5,13 @@ Created on Wed Apr 15 15:14:55 2020
 @author: Germán Riaño
 """
 
-import numpy as np
-
-import pytest
 import math
 import warnings
+
+import numpy as np
+import pytest
 from scipy import integrate, stats
+
 from pyphase.ph import ph_erlang
 
 

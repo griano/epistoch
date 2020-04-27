@@ -12,7 +12,7 @@ import math
 import numpy as np
 import pandas as pd
 import pytest
-from scipy import integrate, stats, interpolate
+from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
 from epi_stoch.utils.stats import loss_function
@@ -206,5 +206,3 @@ def test_SIR():
 
 if __name__ == "__main__":
     test_SIR()
-    
-
