@@ -11,6 +11,8 @@ import pytest
 import math
 import warnings
 from scipy import integrate, stats
+from pyphase.ph import ph_erlang
+
 
 def get_lognorm(mu, sigma):
     """
@@ -58,17 +60,16 @@ def get_gamma(mu, sigma):
 
 class ConstantDist(stats.rv_continuous):
     
-    # def __init2__(self, *arg, **kargs):
-    #     super(ConstantDist, self).__init__()
-    #     self.name = "constant"
-    
     def _cdf(self, x):
         return np.where(x>=0, 1., 0.)
 
     def _ppf(self, p):
         return 0.0
+    
+    def _loss1(self, x):
+        return np.where(x>0, 0.0, -x)  # [E(0-x)^+] 
 
-constant = ConstantDist(a =0.)
+constant = ConstantDist(a =0., name="constant")
 
 def loss_function(dist, force=False):
     
@@ -90,8 +91,15 @@ def loss_function(dist, force=False):
     lo, hi = dist.support()
     loc, scale = None, None
     if not force:
-        name = dist.dist.name
+        if 'loss1' in dir(dist):
+            return dist.loss1
+        name = None
         return_fun = None
+        if 'name'in dir(dist):
+            name = dist.name
+        elif 'dist' in dir(dist):
+            if 'name' in dir(dist.dist):
+                name = dist.dist.name
         if name == 'expon':
             return_fun = lambda x: np.exp(-x)
         if name == 'gamma':
@@ -111,13 +119,17 @@ def loss_function(dist, force=False):
                     result = np.exp(.5 *s*s) * stats.norm.sf(np.log(x)/s - s) - x*stats.norm.sf(np.log(x)/s)
                 return result
             return_fun = loss1
+        if name == "constant":
+            loc = dist.args[0] if len(dist.args) > 0 else None
+            return_fun = dist.dist._loss1
         if return_fun is not None:
             loc = dist.kwds.get('loc', 0.0) if loc is None else loc
             scale = dist.kwds.get('scale', 1.0) if scale is None else scale
-            return lambda x: np.where(x>lo, scale*return_fun((x - loc)/scale), dist.mean() - x)   
+            loss1 = lambda x: np.where(x>lo, scale*return_fun((x - loc)/scale), dist.mean() - x) 
+            return loss1
         
-    return np.vectorize(lambda x : integrate.quad(dist.sf, x, hi)[0])
-
+    loss1 = np.vectorize(lambda x : integrate.quad(dist.sf, x, hi)[0])
+    return loss1
 
 def avg_recovery_rate(dist):
     loss = loss_function(dist)
@@ -139,10 +151,12 @@ def avg_recovery_rate(dist):
 ###############################
 
 def test_constant():
-    x = constant()
-    assert 0 == x.mean()
-    x = constant(loc=8)
-    assert 8 == x.mean()
+    v = constant()
+    assert 0 == v.mean()
+    v = constant(loc=8)
+    assert 8 == v.mean()
+    const_loss = loss_function(v)
+    # assert 1 == const_loss(9)
     
 
 def test_loss_function():
@@ -152,7 +166,7 @@ def test_loss_function():
     gm2 = stats.gamma(a=2, scale=3)
     nrm = stats.norm(loc=4, scale=1)
     lnrm = get_lognorm(4,1)
-    const = constant(4)
+    const = constant(loc=4)
     for force in [True, False]:
         loss_expo = loss_function(expo, force=force)
         loss_gm1 = loss_function(gm1, force=force)
@@ -167,19 +181,28 @@ def test_loss_function():
         x = np.array([-2, -1, 0, 1, 3, 1000])
         # For positive vars loss1(0) = mean
         loss_expo_at_x = np.array([6.00000000e+000, 5.00000000e+000, 4.00000000e+000, 3.11520313e+000, 1.88946621e+000, 1.06882573e-108])
-        assert(loss_expo_at_x == pytest.approx(loss_expo(x)))
-        assert(loss_expo_at_x == pytest.approx(loss_gm1(x)))
+        np.testing.assert_allclose(loss_expo(x),loss_expo_at_x,  atol=EPS, err_msg=f"Expo loss, force={force}")
+        np.testing.assert_allclose(loss_gm1(x), loss_expo_at_x, atol=EPS, err_msg=f"Gamma1 loss, force={force}")
         loss_gamma2_at_x = np.array([8.00000000e+000, 7.00000000e+000, 6.00000000e+000, 5.01571917e+000,3.31091497e+000, 1.72896654e-142])
-        assert(loss_gamma2_at_x == pytest.approx(loss_gm2(x)))
+        np.testing.assert_allclose(loss_gm2(x), loss_gamma2_at_x, atol=EPS)
         loss_norm_at_x = np.array([6., 5, 4, 3.00038215, 1.08331547,0.])
         assert(loss_norm_at_x == pytest.approx(loss_norm(x), rel=EPS))
         loss_lnrm_at_x = np.array([6, 5, 4, 3.00000000e+000,1.05078013e+000, 7.72290351e-112])
         assert(loss_lnrm_at_x == pytest.approx(loss_lnrm(x), rel=EPS))
         loss_const_at_x = np.array([6., 5., 4., 3., 1., 0.])
-        assert(loss_const_at_x == pytest.approx(loss_const(x)))
+        np.testing.assert_allclose(loss_const(x), loss_const_at_x, err_msg=f"Constant loss, force={force}" )
 
+def test_ph_loss():
+    phd = ph_erlang(3, 10)
+    gma = stats.gamma(a=3, scale=1/10)
+    x = np.linspace(0,2)
+    loss_gma = loss_function(gma, force=False)
+    loss_gma_at_x = loss_gma(x)
+    loss_ph_at_x = phd.loss1(x)
+    np.testing.assert_allclose(loss_gma_at_x, loss_ph_at_x)
+    
 
 if __name__ == '__main__':
     test_constant()
     test_loss_function()
-    
+    test_ph_loss()

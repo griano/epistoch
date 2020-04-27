@@ -13,7 +13,6 @@ import numpy as np
 import pandas as pd
 import pytest
 from scipy import integrate, stats, interpolate
-import matplotlib.pyplot as plt
 from tqdm import tqdm
 
 from epi_stoch.utils.stats import loss_function
@@ -119,7 +118,7 @@ def stochasticSIR(population=1000,
                   I0 = 1.0, 
                   R0 = 0.0,
                   num_days = 160,
-                  delta = 1,
+                  num_periods = None,
                   method='loss',
                   logger=None):
     if logger is None:
@@ -137,7 +136,8 @@ def stochasticSIR(population=1000,
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam
     # A grid of time points (in days)
-    num_periods = round (num_days/delta)
+    num_periods = 10 * num_days if num_periods is None else num_periods
+    delta = num_days/num_periods
     times = np.linspace(start=0.0, stop=num_days, num=num_periods+1)
     survival = dist.sf(times)
     pdfs = dist.pdf(times)
@@ -200,7 +200,7 @@ def report_summary(name, model, N):
 def test_SIR():
     N = 1000
     sir = classicalSIR(N)
-    sir_g = stochasticSIR(N, delta=.1)
+    sir_g = stochasticSIR(N)
     error = print_error(sir, sir_g, N)
     assert(0.0 == pytest.approx(error, abs=1e-2))
 
