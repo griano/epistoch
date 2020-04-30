@@ -1,0 +1,17 @@
+/.spyproject/
+__pycache__
+**/__pycache__
+*.toc
+*.bbl
+*.out
+*.aux
+*.synctex.gz
+*.tps
+*.tcp
+/paper/epistoch/ssir.tps
+/paper/epistoch/epi_stoch.pdf
+*.ps
+*.log
+*.lyx
+*.dvi
+*.blg
