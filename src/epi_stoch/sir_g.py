@@ -11,7 +11,6 @@ import math
 
 import numpy as np
 import pandas as pd
-import pytest
 from scipy import integrate, interpolate, optimize, stats
 from tqdm import tqdm
 
@@ -29,13 +28,7 @@ def deriv(t, y, beta, gam):
 
 
 def classicalSIR(
-    population=1000,
-    reproductive_factor=2.0,
-    infectious_period_mean=10,
-    I0=1.0,
-    R0=0.0,
-    num_days=160,
-    use_odeint=True,
+    population=1000, reproductive_factor=2.0, infectious_period_mean=10, I0=1.0, R0=0.0, num_days=160, use_odeint=True,
 ):
     """Code based on
     https://scipython.com/book/chapter-8-scipy/additional-examples/the-sir-epidemic-model/
@@ -63,12 +56,7 @@ def classicalSIR(
         S, I = ret.T
     else:
         sol = integrate.solve_ivp(
-            fun=deriv,
-            t_span=[0, num_days],
-            y0=y0,
-            args=(beta, gam),
-            t_eval=times,
-            vectorized=True,
+            fun=deriv, t_span=[0, num_days], y0=y0, args=(beta, gam), t_eval=times, vectorized=True,
         )
         times = sol.t
         S, I = sol.y
@@ -76,8 +64,8 @@ def classicalSIR(
     I = I * N
     R = N - S - I
     result = dict()
-    result['data'] = pd.DataFrame(data={"Day": times, "S": S, "I": I, "R": R}).set_index("Day")
-    result['total_infected'] = get_total_infected(reproductive_factor)
+    result["data"] = pd.DataFrame(data={"Day": times, "S": S, "I": I, "R": R}).set_index("Day")
+    result["total_infected"] = get_total_infected(reproductive_factor)
     return result
 
 
@@ -109,11 +97,10 @@ def compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method=
     if method == "loss":
         IS = np.zeros_like(survival)
         # next line equivalent to: IS[: n + 1] = np.array([I[n - k] * S[n - k] for k in range(n + 1)])
-        IS[: n + 1] = np.flipud(I[:n+1] * S[:n+1])
+        IS[: n + 1] = np.flipud(I[: n + 1] * S[: n + 1])
         slopes = np.diff(IS, append=0.0) / delta  # m1, m2, ...
         delta_slopes = np.diff(slopes, prepend=0.0)
         return IS[0] + sum(delta_slopes * loss1)
-
 
     if method == "simpson":
         integral_points = [pdfs[n - k] * S[k] * I[k] for k in range(0, n + 1)]
@@ -168,9 +155,9 @@ def sir_g(
     loss1 = loss_fun(times)
 
     S = np.zeros(num_periods + 1)
-    #S[:] = np.nan
+    # S[:] = np.nan
     I = np.zeros(num_periods + 1)
-#    I[:] = np.nan
+    #    I[:] = np.nan
     S[0] = S0
     I[0] = I0
     logging.info(f"Computing SIR-G model with {num_periods} periods.")
@@ -188,8 +175,8 @@ def sir_g(
     I = N * interpolate.interp1d(times, I)(days)
     R = N - S - I
     result = dict()
-    result['data'] = pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
-    result['total_infected'] = get_total_infected(reproductive_factor)
+    result["data"] = pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
+    result["total_infected"] = get_total_infected(reproductive_factor)
     return result
 
 
@@ -205,15 +192,13 @@ def get_total_infected(reproductive_factor, normalzed_s0=1):
 def get_array_error(name, x1, x2, N=1, do_print=True):
     error = np.abs(x1 - x2) / N
     if do_print:
-        print(
-            f"{name}: max error = {np.max(error):.2}, avg error = {np.mean(error):.2}"
-        )
+        print(f"{name}: max error = {np.max(error):.2}, avg error = {np.mean(error):.2}")
     return np.max(error)
 
 
 def get_error(model1, model2, N, do_print=True):
-    error_i = get_array_error("I", model1['data'].I, model2['data'].I, N, do_print)
-    error_s = get_array_error("S", model1['data'].S, model2['data'].S, N, do_print)
+    error_i = get_array_error("I", model1["data"].I, model2["data"].I, N, do_print)
+    error_s = get_array_error("S", model1["data"].S, model2["data"].S, N, do_print)
     return 0.5 * (error_i + error_s)
 
 
@@ -222,7 +207,7 @@ def print_error(model1, model2, N):
 
 
 def report_summary(name, result, N):
-    model = result['data']
+    model = result["data"]
     n = len(model) - 1
     print(f"Model {name} Summary")
     print(f"  Total Infected People: {int(model.R[n]):,d} ({model.R[n]/N:.2%})")
@@ -230,23 +215,3 @@ def report_summary(name, result, N):
     print(f"  Peak Day: {int(np.argmax(model.I)):,d}")
     if "total_infected" in result:
         print(f"  Theoretical Total Infected: {result['total_infected']:.2%}")
-
-
-def test_SIR():
-    N = 1000
-    sir_classic = classicalSIR(N)
-    sir_gen = sir_g(N)
-    error = print_error(sir_classic, sir_gen, N)
-    report_summary("SIR", sir_classic, N)
-    report_summary("SIR-G", sir_gen, N)
-    assert 0.0 == pytest.approx(error, abs=1e-2)
-
-def profile_sir_g():
-    import cProfile
-    import pstats
-    cProfile.run('stochasticSIR(N)', 'restats')
-    p = pstats.Stats('restats')
-    return p
-
-if __name__ == "__main__":
-    test_SIR()

@@ -40,11 +40,7 @@ def performance_test(N):
 def compare_models(name, dist, N=1000000, I0=1, num_days=100, R0=2.25, do_plots=True):
     name1 = "SIR"
     SIR_classic = classicalSIR(
-        population=N,
-        I0=I0,
-        reproductive_factor=R0,
-        infectious_period_mean=dist.mean(),
-        num_days=num_days,
+        population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=dist.mean(), num_days=num_days,
     )
 
     name2 = "SIR-G"
@@ -79,32 +75,16 @@ def compare_models(name, dist, N=1000000, I0=1, num_days=100, R0=2.25, do_plots=
 
 
 def variance_analysis(
-    N=1000000,
-    I0=1,
-    num_days=100,
-    R0=2.25,
-    infectious_period_mean=4.4,
-    cvs=[0.5, 1.0, 2.0],
+    N=1000000, I0=1, num_days=100, R0=2.25, infectious_period_mean=4.4, cvs=[0.5, 1.0, 2.0],
 ):
 
     dists = {}
     models = {}
     print("Computing Classical")
     sir_classic = classicalSIR(
-        population=N,
-        I0=I0,
-        reproductive_factor=R0,
-        infectious_period_mean=infectious_period_mean,
-        num_days=num_days,
+        population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=infectious_period_mean, num_days=num_days,
     )
-    fig = plot_sir(
-        "SIR",
-        sir_classic,
-        N,
-        formats={"I": "r-"},
-        title="SIR-G with Different Distributions",
-        linewidth=3,
-    )
+    fig = plot_sir("SIR", sir_classic, N, formats={"I": "r-"}, title="SIR-G with Different Distributions", linewidth=3,)
 
     print("Computing Constant SIR-G")
     dist = utils.stats.constant(infectious_period_mean)
@@ -138,10 +118,8 @@ def variance_analysis(
                 disease_time_distribution=dist,
                 method="loss",
             )
-#            models[(dist, cv)].name = mod_name
-            plot_sir(
-                mod_name, models[(dist, cv)], N, fig, formats={"I": ""}, linestyle="--"
-            )
+            #            models[(dist, cv)].name = mod_name
+            plot_sir(mod_name, models[(dist, cv)], N, fig, formats={"I": ""}, linestyle="--")
     plt.show()
 
     filename = os.path.join("./paper/epistoch/figures/", "Variance-Analysis.pdf")

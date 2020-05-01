@@ -15,33 +15,12 @@ from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
 import epi_stoch.utils as utils
-from epi_stoch.sir_g import (
-    EPS,
-    classicalSIR,
-    compute_integral,
-    deriv,
-    get_array_error,
-    print_error,
-    sir_g,
-)
+from epi_stoch.sir_g import EPS, classicalSIR, compute_integral, deriv, get_array_error, print_error, sir_g
 from epi_stoch.utils.stats import loss_function
 
 
 def deriv2(
-    t,
-    y,
-    beta,
-    gam,
-    I0,
-    times,
-    delta,
-    S_guess,
-    I_guess,
-    survival,
-    pdfs,
-    loss1,
-    dist,
-    method,
+    t, y, beta, gam, I0, times, delta, S_guess, I_guess, survival, pdfs, loss1, dist, method,
 ):
     # This function does not depend on y, but it depends on t
     # We buid piece-wise linear functions
@@ -52,9 +31,7 @@ def deriv2(
     I = interpolate.interp1d(times, I_guess, fill_value="extrapolate")
     dSdt = -beta * S(t) * I(t)
     n = int(np.floor(t / delta))
-    integral = compute_integral(
-        n, delta, S_guess, I_guess, times, survival, pdfs, loss1, dist, method
-    )
+    integral = compute_integral(n, delta, S_guess, I_guess, times, survival, pdfs, loss1, dist, method)
     dIdt = -dSdt - beta * integral - gam * I0 * survival[n]
     # compute_integral(n, delta, S_guess, I_guess, survival, delta_loss)
     # print(f"S'({t})={dSdt}  I'({t})={dIdt}")
@@ -87,7 +64,7 @@ def stochasticSIR2(
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam
     # A grid of time points (in days)
-    delta= num_days/num_periods
+    delta = num_days / num_periods
     times = np.linspace(start=0.0, stop=num_days, num=num_periods + 1)
     survival = dist.sf(times)
     pdfs = dist.pdf(times)
@@ -147,7 +124,6 @@ def stochasticSIR2(
     I = N * interpolate.interp1d(times, I)(days)
     R = N - S - I
     return pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
-
 
 
 def test_sir_g2(num_periods=2000):

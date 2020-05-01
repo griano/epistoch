@@ -20,16 +20,11 @@ class mixrv_gen(rv_continuous):
     def _cdf(self, x):
         ps = self.ps
         vs = self.vs
-        # print(f"x= {x}, ps={ps}")
-        # print(f"np.array([v.cdf(x) for v in vs]) = {np.array([v.cdf(x) for v in vs])}")
-        # print(f"ps * np.array([v.cdf(x) for v in vs])={ps * np.array([v.cdf(x) for v in vs])}")
         return np.sum(ps * np.array([v.cdf(x) for v in vs]), axis=0)
 
     def _munp(self, n):
         ps = np.transpose(self.ps)
         vs = self.vs
-        # print(f"[v.moment(n) for v in vs]={[v.moment(n) for v in vs]}")
-        # print(f"ps * np.array([v.moment(n) for v in vs])={ps * np.array([v.moment(n) for v in vs])}")
         return np.sum(ps * np.array([v.moment(n) for v in vs]))
 
 

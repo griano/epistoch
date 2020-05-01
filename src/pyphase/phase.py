@@ -6,11 +6,10 @@ Created on Sat Apr 25 11:55:02 2020
 """
 import numpy as np
 from numpy import matlib as ml
-from scipy.special import binom
-from scipy.stats import expon, gamma, rv_continuous
 from scipy import linalg
+from scipy.special import binom
+from scipy.stats import rv_continuous
 
-from pyphase.testing import assert_dist_identical, mix_rv
 
 class PhaseTypeGen(rv_continuous):
     def __init__(self, alpha, A, prec=None):
@@ -34,30 +33,29 @@ class PhaseTypeGen(rv_continuous):
         self.erd = None  # Equilibrium residual distribution
 
     def _cdf(self, x):
-        return np.asarray([1. - np.sum(self.alpha @ linalg.expm(self.A.A * xv) , axis=1) for xv in x])
-    
+        return np.asarray([1.0 - np.sum(self.alpha @ linalg.expm(self.A.A * xv), axis=1) for xv in x])
+
     def _pdf(self, x):
         res = np.asarray([self.alpha @ linalg.expm(self.A.A * xv) @ self._get_a() for xv in x]).flatten()
         return res
 
     def _moments(self, k=None):
         if k is None:
-            k=2
+            k = 2
         moms = list()
         left = self.alpha
-        for i in range(1, k+1):
-            left = - i * self._solve_vector_A(left, self.A)
+        for i in range(1, k + 1):
+            left = -i * self._solve_vector_A(left, self.A)
             moms.append(np.sum(left.flatten()))
         return moms
-        
+
     def _stats(self):
         # Mean(‘m’), variance(‘v’), skew(‘s’), and/or kurtosis(‘k’).
         moments = self._moments(4)
         moments = np.concatenate(([1.0], moments))
         mean = moments[1]
         centered_moments = {
-            n: sum([binom(n, k) * moments[k] * (-mean) ** (n - k) for k in range(0, n + 1)])
-            for n in range(1, 5)
+            n: sum([binom(n, k) * moments[k] * (-mean) ** (n - k) for k in range(0, n + 1)]) for n in range(1, 5)
         }
         var = centered_moments[2]
         sd = np.sqrt(var)
@@ -110,11 +108,7 @@ class PhaseTypeGen(rv_continuous):
         options = {"precision": 2}
         alpha_stg = np.array2string(self.alpha, **options)
         A_stg = np.array2string(self.A, **options)
-        return (
-            "PhaseType: \n"
-            f"  alpha = {alpha_stg}\n"
-            f"  A     = {self._pre_append(A_stg,'          ')}"
-        )
+        return "PhaseType: \n" f"  alpha = {alpha_stg}\n" f"  A     = {self._pre_append(A_stg,'          ')}"
 
     def __repr__(self):
         return f"PH({self.alpha.__repr__()}, {self.A.__repr__()})"
@@ -177,85 +171,3 @@ def ph_mix(ph1, ph2, p1):
     alpha = np.block([p1 * alpha1, (1 - p1) * alpha2])
     A = np.block([[A1, _z(n1, n2)], [_z(n2, n1), A2]])
     return phase(alpha, A)
-
-
-#######################################
-#  T E S T I N G
-#######################################
-
-
-def test_ph_expo():
-    lambd = 10
-    exp = expon(scale=1.0 / lambd)
-    dists = dict()
-    dists["np"] = phase(alpha=np.array([1.0]), A=np.array([-lambd]))
-    dists["float"] = phase(alpha=1.0, A=-lambd)
-    dists["mat"] = phase(alpha=ml.mat([1.0]), A=ml.mat([[-lambd]]))
-    dists["method"] = ph_expon(lambd)
-    for name, dist in dists.items():
-        assert_dist_identical(exp, dist, "Expo-" + name)
-
-
-def test_ph_gamma():
-    lam = 20.0
-    n = 2
-    gam = gamma(a=n, scale=1 / lam)
-    a = [1.0, 0.0]
-    A = [[-lam, lam], [0, -(lam)]]
-    dists = dict()
-    dists["np"] = phase(alpha=np.array(a), A=np.array(A))
-    dists["mat"] = phase(alpha=ml.mat(a), A=ml.mat(A))
-    dists["method"] = ph_erlang(2, lam)
-    for name, dist in dists.items():
-        assert_dist_identical(gam, dist, "Gamma-" + name)
-
-
-def test_ph_sum():
-    lam = 3.0
-    v1 = phase(alpha=np.array([1.0]), A=np.array([-lam]))
-    v2 = v1
-    v = ph_sum(v1, v2)
-    print(f"sum = {v}")
-    expected = gamma(a=2, scale=1 / lam)
-    assert_dist_identical(expected, v, "Sum Expos")
-
-
-def test_ph_mix():
-    lam1 = 4.0
-    lam2 = 2.0
-    p = 0.4
-    v1 = ph_expon(lam1)
-    v2 = ph_expon(lam2)
-    v = ph_mix(v1, v2, p)
-    print(f"mix = {v}")
-    expected = mix_rv(ps=np.array([p, 1 - p]), vs=[v1, v2])
-    x = np.array([1, 2, 3])
-    print(f"v-cdf = {v.cdf(x)}")
-    print(f"ex-cdf = {expected.cdf(x)}")
-    print(f"v-moms: {[{n:v.moment(n) for n in range(1,4)}]}")
-    print(f"exp-moms: {[{n:expected.moment(n) for n in range(1,4)}]}")
-    assert_dist_identical(expected, v, "Mix-HyperExpo")
-
-
-def test_loss1():
-    lambd = 0.5
-    v1 = ph_expon(lambd)
-    x = np.linspace(1, 5, 1)
-    exp_loss1 = lambda x: np.exp(-lambd * x) / lambd
-    np.testing.assert_allclose(v1.loss1(x), exp_loss1(x))
-
-
-def test_equilibrium_phases():
-    v = ph_erlang(n=3, mean=3)
-    print(v)
-    pi = v.equilibrium_pi()
-    print(pi)
-
-
-if __name__ == "__main__":
-    test_equilibrium_phases()
-    test_ph_expo()
-    test_ph_gamma()
-    test_loss1()
-    test_ph_sum()
-    test_ph_mix()

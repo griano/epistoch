@@ -34,10 +34,10 @@ def plot_sir(
     fig=None,
     title=None,
     formats={"S": "b-", "I": "r-", "R": "g-"},
-    legend_fmt={"loc":"best", "shadow":True},
+    legend_fmt={"loc": "best", "shadow": True},
     **kwd,
 ):
-    data = model['data']
+    data = model["data"]
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     if fig is None:
         title = name if title is None else title
@@ -51,22 +51,15 @@ def plot_sir(
         linewidth = kwd.get("linewidth", 2)
         linestyle = kwd.get("linestyle", "-")
         ax.plot(
-            t,
-            series,
-            fmt,
-            alpha=0.8,
-            lw=linewidth,
-            linestyle=linestyle,
-            label=f"{s} - {name}",
+            t, series, fmt, alpha=0.8, lw=linewidth, linestyle=linestyle, label=f"{s} - {name}",
         )
     ax.legend(**legend_fmt)
     return fig
 
 
-def plot_IR(name, model, N, fig=None, linestyle="-", title=None,
-            legend_fmt={"loc":"best", "shadow":True}):
+def plot_IR(name, model, N, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best", "shadow": True}):
     # Plot the data on three separate curves for S(t), I(t) and R(t)
-    data = model['data']
+    data = model["data"]
     if fig is None:
         title = name if title is None else title
         fig, ax = prepare_plot(title)
@@ -74,22 +67,10 @@ def plot_IR(name, model, N, fig=None, linestyle="-", title=None,
         allaxes = fig.get_axes()
         ax = allaxes[0]
     ax.plot(
-        data.S / N,
-        data.R / N,
-        "g",
-        alpha=0.8,
-        lw=2,
-        linestyle=linestyle,
-        label="Removed - " + name,
+        data.S / N, data.R / N, "g", alpha=0.8, lw=2, linestyle=linestyle, label="Removed - " + name,
     )
     ax.plot(
-        data.S / N,
-        data.I / N,
-        "b",
-        alpha=0.8,
-        lw=2,
-        linestyle=linestyle,
-        label="Infected - " + name,
+        data.S / N, data.I / N, "b", alpha=0.8, lw=2, linestyle=linestyle, label="Infected - " + name,
     )
     ax.legend(**legend_fmt)
     return fig
