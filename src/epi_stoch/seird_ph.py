@@ -7,7 +7,7 @@ Created on Sun Apr 26 21:50:11 2020
 
 import numpy as np
 
-from epi_stoch.sir_ph import sir_phg
+from epi_stoch.sir_phg import sir_phg
 from pyphase.phase import ph_erlang, ph_mix, ph_sum
 
 
@@ -37,9 +37,8 @@ def seird_ph(
     result = sir_phg(
         population=population,
         beta=beta,
-        disease_time_distribution=total_time,
+        infectious_time_distribution=total_time,
         I0=I0,
-        R0=0.0,
         num_days=num_days,
         logger=logger,
         report_phases=True,

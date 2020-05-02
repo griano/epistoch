@@ -5,15 +5,15 @@ import pytest
 from matplotlib import pyplot as plt
 
 from epi_stoch.seird_ph import seird_ph
-from epi_stoch.sir_g import classicalSIR, print_error, report_summary, sir_g
-from epi_stoch.sir_ph import sir_phg
+from epi_stoch.sir_g import print_error, report_summary, sir_classical, sir_g
+from epi_stoch.sir_phg import sir_phg
 from epi_stoch.utils.plotting import plot_sir
 from pyphase.phase import ph_erlang, ph_expon
 
 
 def test_SIR():
     N = 1000
-    sir_classic = classicalSIR(N)
+    sir_classic = sir_classical(N)
     sir_gen = sir_g(N)
     error = print_error(sir_classic, sir_gen, N)
     report_summary("SIR", sir_classic, N)
@@ -38,8 +38,8 @@ def test_sir_phg_expon(do_plot=False):
     assert dist.mean() == infectious_period_mean
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam
-    sir = classicalSIR(N, reproductive_factor=reproductive_factor)
-    sir_ph_exp = sir_phg(N, beta=beta, disease_time_distribution=dist)
+    sir = sir_classical(N, reproductive_factor=reproductive_factor)
+    sir_ph_exp = sir_phg(N, beta=beta, infectious_time_distribution=dist)
     error = print_error(sir, sir_ph_exp, N)
     if do_plot:
         fig = plot_sir("SIR", sir, N, title="PH-expo-test")
@@ -57,8 +57,8 @@ def test_sir_phg_erlang(do_plot=False):
     assert dist.mean() == infectious_period_mean
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam
-    sir_g_model = sir_g(N, reproductive_factor=reproductive_factor, disease_time_distribution=dist, num_periods=2000)
-    sir_ph_erlang = sir_phg(N, beta=beta, disease_time_distribution=dist)
+    sir_g_model = sir_g(N, reproductive_factor=reproductive_factor, infectious_time_distribution=dist, num_periods=2000)
+    sir_ph_erlang = sir_phg(N, beta=beta, infectious_time_distribution=dist)
     error = print_error(sir_g_model, sir_ph_erlang, N)
     if do_plot:
         fig = plot_sir("SIR-G", sir_g_model, N, title="PH-erlang-test")

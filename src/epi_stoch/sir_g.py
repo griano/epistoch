@@ -27,20 +27,44 @@ def deriv(t, y, beta, gam):
     return dSdt, dIdt
 
 
-def classicalSIR(
-    population=1000, reproductive_factor=2.0, infectious_period_mean=10, I0=1.0, R0=0.0, num_days=160, use_odeint=True,
+def sir_classical(
+    population=1000, reproductive_factor=2.0, infectious_period_mean=10, I0=1.0, S0=None, num_days=160, use_odeint=True,
 ):
-    """Code based on
+    """
+    Solves a classical SIR model
+    Parameters
+    ----------
+    population: float
+        total population size
+    reproductive_factor: float
+        basic reproductive factor(R0)
+    infectious_period_mean: float
+        expected value of Infectious Period Time
+    I0: float
+        Initial infectious population
+    S0: float
+        Initial susceptible population (optinal, defaults to all but I0)
+    num_days: int
+        number of days to run
+    use_odeint: bool
+
+
+    Returns
+    -------
+    A dictionary with these fields:
+        data: DataFrame with columns S, I, R
+        total_infected: estimation of total infected individuals
+
+    Note: Code based on
     https://scipython.com/book/chapter-8-scipy/additional-examples/the-sir-epidemic-model/
     """
     # Total population, N.
     N = population
     # Initial number of infected and recovered individuals, I0 and R0.
     I0 = I0 / N
-    R0 = R0 / N
+    S0 = S0 / N if S0 is not None else 1 - I0
+    R0 = 1 - I0 - S0
 
-    # Everyone else, S0, is susceptible to infection initially.
-    S0 = 1 - I0 - R0
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1.0 / infectious_period_mean
     beta = reproductive_factor * gam
@@ -118,25 +142,55 @@ def compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method=
 def sir_g(
     population=1000,
     reproductive_factor=2.0,
-    disease_time_distribution=stats.expon(scale=10),
+    infectious_time_distribution=stats.expon(scale=10),
     I0=1.0,
-    R0=0.0,
+    S0 = None,
     num_days=160,
     num_periods=None,
     method="loss",
-    logger=None,
+    logger=None
 ):
+    """
+    Solves a SIR-G model
+    Parameters
+    ----------
+    population: float
+        total population size
+    reproductive_factor: float
+        basic reproductive factor(R0)
+    infectious_time_distribution: scipy.stats.rv_continuous
+        expected value of Infectious Period Time
+    I0: float
+        Initial infectious population
+    S0: float
+        Initial susceptible population (optinal, defaults to all but I0)
+    num_days: int
+        number of days to run
+    num_periods:int
+        Number of periods to use for computations. Higher number will lead ot more precise computation.
+    method: string
+        Method used for the internal integral
+    logger
+        Logger object
+    Returns
+    -------
+    A dictionary with these fields:
+        data: DataFrame with columns S, I, R
+        total_infected: estimation of total infected individuals
+
+    """
+
     if logger is None:
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
     # Total population, N.
     N = population
-    dist = disease_time_distribution
-    # Normailize to imporve numerical stability
+    dist = infectious_time_distribution
+
     I0 = I0 / N
-    R0 = R0 / N
-    # Everyone else, S0, is susceptible to infection initially.
-    S0 = 1 - I0 - R0
+    S0 = S0 / N if S0 is not None else 1 - I0
+    R0 = 1 - I0 - S0
+
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam

@@ -2,20 +2,19 @@
 """
 Created on Sun Apr 12 16:50:30 2020
 
-@author: germanr
+@author: Germán Riaño
 """
 
 import logging
 import math
 
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
 import epi_stoch.utils as utils
-from epi_stoch.sir_g import EPS, classicalSIR, compute_integral, deriv, get_array_error, print_error, sir_g
+from epi_stoch.sir_g import EPS, compute_integral, deriv, get_array_error, print_error, sir_g
 from epi_stoch.utils.stats import loss_function
 
 
@@ -129,7 +128,7 @@ def stochasticSIR2(
 def test_sir_g2(num_periods=2000):
     N = 1000
     dist = utils.stats.get_gamma(10, 2)
-    model1 = sir_g(population=N, disease_time_distribution=dist, num_periods=num_periods)
+    model1 = sir_g(population=N, infectious_time_distribution=dist, num_periods=num_periods)
     model2 = stochasticSIR2(population=N, disease_time_distribution=dist, num_periods=num_periods)
     model1.plot()
     model2.plot()

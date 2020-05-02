@@ -37,24 +37,53 @@ def deriv(t, y, beta, n, alpha, A, a):
 def sir_phg(
     population=1000,
     beta=0.2,
-    disease_time_distribution=ph_expon(lambd=1 / 10),
+    infectious_time_distribution=ph_expon(lambd=1 / 10),
     I0=1.0,
-    R0=0.0,
+    S0=None,
     num_days=160,
     logger=None,
     report_phases=False,
 ):
+    """
+    Compute a SIR-PH model
+
+    Parameters
+    ----------
+    population : float, optional
+        Total population. The default is 1000.
+    beta : float, optional
+        Contagion rate. The default is 0.2.
+    infectious_time_distribution : phase, optional
+        Must be a PH dstribution. The default is ph_expon(lambd=1 / 10).
+    I0 : float, optional
+        initial population. The default is 1.0.
+    S0 : TYPE, optional
+        Initial susceptible. The default is all but I0.
+    num_days : int, optional
+        Number of days to run. The default is 160.
+    logger : TYPE, optional
+        Logger object. The default is None.
+    report_phases : TYPE, optional
+        Wether to include phase levels in the report. The default is False.
+
+    Returns
+    -------
+    A dictionary with these fields:
+        data: DataFrame with columns S, I, R. Optionally: I-Phase0,...,I-Phase(n-1), and R-Phase0,...R-Phase(n-1)
+        total_infected: estimation of total infected individuals
+
+    """    
     if logger is None:
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
     # Total population, N.
     N = population
-    dist = disease_time_distribution
-    # Normailize to imporve numerical stability
+    dist = infectious_time_distribution
+
     I0 = I0 / N
-    R0 = R0 / N
-    # Everyone else, S0, is susceptible to infection initially.
-    S0 = 1 - I0 - R0
+    S0 = S0 / N if S0 is not None else 1 - I0
+    R0 = 1 - I0 - S0
+
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1 / dist.mean()
     # A grid of time points (in days)

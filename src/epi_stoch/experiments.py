@@ -2,7 +2,7 @@
 """
 Created on Wed Apr 15 15:34:26 2020
 
-@author: germanr
+@author: Germán Riaño
 """
 
 import logging
@@ -14,7 +14,7 @@ import numpy as np
 import scipy
 
 import epi_stoch.utils as utils
-from epi_stoch.sir_g import classicalSIR, print_error, report_summary, sir_g
+from epi_stoch.sir_g import print_error, report_summary, sir_classical, sir_g
 from epi_stoch.utils.plotting import plot_IR, plot_sir
 
 
@@ -31,15 +31,15 @@ def performance_test(N):
         number=1000,
     )
     print(f"tt ivp = {tt}")
-    tc, Sc, Ic, Rc = classicalSIR(population=N, use_odeint=True)
-    tc2, Sc2, Ic2, Rc2 = classicalSIR(population=N, use_odeint=False)
+    tc, Sc, Ic, Rc = sir_classical(population=N, use_odeint=True)
+    tc2, Sc2, Ic2, Rc2 = sir_classical(population=N, use_odeint=False)
     print(np.max(np.abs(Ic - Ic2)) / N)
     print(np.max(np.abs(Sc - Sc2)) / N)
 
 
 def compare_models(name, dist, N=1000000, I0=1, num_days=100, R0=2.25, do_plots=True):
     name1 = "SIR"
-    SIR_classic = classicalSIR(
+    SIR_classic = sir_classical(
         population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=dist.mean(), num_days=num_days,
     )
 
@@ -50,7 +50,7 @@ def compare_models(name, dist, N=1000000, I0=1, num_days=100, R0=2.25, do_plots=
         num_days=num_days,
         num_periods=2000,
         reproductive_factor=R0,
-        disease_time_distribution=dist,
+        infectious_time_distribution=dist,
         method="loss",
     )
     report_summary(name1, SIR_classic, N)
@@ -81,7 +81,7 @@ def variance_analysis(
     dists = {}
     models = {}
     print("Computing Classical")
-    sir_classic = classicalSIR(
+    sir_classic = sir_classical(
         population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=infectious_period_mean, num_days=num_days,
     )
     fig = plot_sir("SIR", sir_classic, N, formats={"I": "r-"}, title="SIR-G with Different Distributions", linewidth=3,)
@@ -94,7 +94,7 @@ def variance_analysis(
         num_days=num_days,
         num_periods=2000,
         reproductive_factor=R0,
-        disease_time_distribution=dist,
+        infectious_time_distribution=dist,
         method="loss",
     )
     fig = plot_sir("Const", sir_constant, N, fig, formats={"I": "b-."}, linewidth=3)
@@ -115,7 +115,7 @@ def variance_analysis(
                 num_days=num_days,
                 num_periods=2000,
                 reproductive_factor=R0,
-                disease_time_distribution=dist,
+                infectious_time_distribution=dist,
                 method="loss",
             )
             #            models[(dist, cv)].name = mod_name
