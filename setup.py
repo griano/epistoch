@@ -1,13 +1,53 @@
-from setuptools import setup
+#!/usr/bin/env python
+
+"""The setup script."""
+
+from setuptools import find_packages, setup
+
+with open("README.rst") as readme_file:
+    readme = readme_file.read()
+
+with open("HISTORY.rst") as history_file:
+    history = history_file.read()
+
+requirements = []
+
+setup_requirements = [
+    "pytest-runner",
+]
+
+test_requirements = [
+    "pytest>=3",
+]
 
 setup(
-    name="EpiStoch",
-    version="1.0",
-    packages=["pyphase", "epi_stoch", "epi_stoch.utils", "epi_stoch.experimental"],
-    package_dir={"": "src"},
-    url="",
-    license="MIT",
     author="Germán Riaño",
-    author_email="griano@jmarkov.org",
-    description="Epidemiology Models with General Random Distribution",
+    author_email="griano@germanriano.com",
+    python_requires=">=3.5",
+    classifiers=[
+        "Development Status :: 2 - Pre-Alpha",
+        "Intended Audience :: Developers",
+        "License :: OSI Approved :: MIT License",
+        "Natural Language :: English",
+        "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.7",
+        "Programming Language :: Python :: 3.8",
+    ],
+    description="Epidemics Models with Random Infectious Period",
+    install_requires=requirements,
+    license="MIT license",
+    long_description=readme + "\n\n" + history,
+    include_package_data=True,
+    keywords="epistoch",
+    name="epistoch",
+    packages=find_packages(where="src", include=["epistoch", "epistoch.*", "pyphase"]),
+    package_dir={"": "src"},
+    setup_requires=setup_requirements,
+    test_suite="tests",
+    tests_require=test_requirements,
+    url="https://github.com/griano/epistoch",
+    version="0.1.0",
+    zip_safe=False,
 )
