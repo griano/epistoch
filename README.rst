@@ -17,7 +17,7 @@ EpiStoch
 
 
 Epidemics Models with Random Infectious Period
-================================================
+----------------------------------------------
 
 This software allows you to model epidemics with general random distribution for the infectious period.
 
