@@ -1,7 +1,7 @@
 import numpy as np
+import pytest
 from scipy import stats
 
-import pytest
 from epistoch.utils.stats import constant, get_lognorm, loss_function
 from pyphase.phase import ph_erlang
 

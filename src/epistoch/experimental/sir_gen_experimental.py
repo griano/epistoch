@@ -14,7 +14,7 @@ from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
 import epistoch.utils as utils
-from epistoch.sir_g import EPS, compute_integral, deriv, get_array_error, print_error, sir_g
+from epistoch.sir_g import EPS, _compute_array_error, _sir_deriv, compute_integral, print_error, sir_g
 from epistoch.utils.stats import loss_function
 
 
@@ -87,7 +87,7 @@ def stochasticSIR2(
 
     max_iterations = 100
     # Integrate the SIR equations over the time grid, t.
-    ret = integrate.odeint(deriv, y0, times, args=(beta, gam), tfirst=True)
+    ret = integrate.odeint(_sir_deriv, y0, times, args=(beta, gam), tfirst=True)
     old_y = ret.T
     max_diff = 1e-3
     alpha = 0.5
@@ -111,7 +111,7 @@ def stochasticSIR2(
         ret2 = integrate.odeint(func=deriv2, y0=y0, t=times, args=args, tfirst=True)
         y = ret2.T
         S, I = y
-        diff = get_array_error("I", I_guess, I, do_print=False)
+        diff = _compute_array_error("I", I_guess, I, do_print=False)
         logger.debug(f"Iteration {iteration:d}: {diff:.4%}")
         if diff < max_diff:
             break

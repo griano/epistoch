@@ -28,9 +28,7 @@ def prepare_plot(title):
 
 
 def plot_sir(
-    name,
     model,
-    N,
     fig=None,
     title=None,
     formats={"S": "b-", "I": "r-", "R": "g-"},
@@ -38,6 +36,8 @@ def plot_sir(
     **kwd,
 ):
     data = model["data"]
+    name = model["name"]
+    N = model["population"]
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     if fig is None:
         title = name if title is None else title
@@ -57,9 +57,11 @@ def plot_sir(
     return fig
 
 
-def plot_IR(name, model, N, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best", "shadow": True}):
+def plot_IR(model, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best", "shadow": True}):
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     data = model["data"]
+    name = model["name"]
+    N = model["population"]
     if fig is None:
         title = name if title is None else title
         fig, ax = prepare_plot(title)

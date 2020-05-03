@@ -23,24 +23,25 @@ def to_array(*args):
 
 
 # The SIR-PH model differential equations.
-def deriv(t, y, beta, n, alpha, A, a):
+def _deriv(t, y, beta, n, alpha, A, a):
     S, x, r = np.split(y, [1, n + 1])
     x = ml.mat(x)
     x.reshape(1, n)
     x_beta = x @ beta
     dSdt = -S * x_beta
     dxdt = S * (x @ beta @ alpha) + x @ A
-    drdt = np.multiply(x.T, a)  # component multiplication
+    drdt = np.multiply(x.T, a)  # component-wise multiplication
     return to_array(dSdt, dxdt, drdt)
 
 
 def sir_phg(
-    population=1000,
-    beta=0.2,
-    infectious_time_distribution=ph_expon(lambd=1 / 10),
+    name,
+    population,
+    beta,
+    infectious_time_distribution,
+    num_days=160,
     I0=1.0,
     S0=None,
-    num_days=160,
     logger=None,
     report_phases=False,
 ):
@@ -49,29 +50,36 @@ def sir_phg(
 
     Parameters
     ----------
+    name: string
+        Model name
     population : float, optional
         Total population. The default is 1000.
     beta : float, optional
         Contagion rate. The default is 0.2.
     infectious_time_distribution : phase, optional
         Must be a PH dstribution. The default is ph_expon(lambd=1 / 10).
+    num_days : int
+        Number of days to run.
     I0 : float, optional
         initial population. The default is 1.0.
-    S0 : TYPE, optional
+    S0 : float or int, optional
         Initial susceptible. The default is all but I0.
-    num_days : int, optional
-        Number of days to run. The default is 160.
-    logger : TYPE, optional
-        Logger object. The default is None.
-    report_phases : TYPE, optional
-        Wether to include phase levels in the report. The default is False.
+    logger : Logger, optional
+        Logger object. If none is given, default logging used.
+    report_phases : boolean, optional
+        Whether to include phase levels in the report. The default is False.
 
     Returns
     -------
     A dictionary with these fields:
+
         data: DataFrame with columns S, I, R. Optionally: I-Phase0,...,I-Phase(n-1), and R-Phase0,...R-Phase(n-1)
+
         total_infected: estimation of total infected individuals
 
+        name: model name
+
+        population: total population
     """
     if logger is None:
         logger = logging.getLogger(__name__)
@@ -101,7 +109,7 @@ def sir_phg(
     # Initial conditions vector
     y0 = to_array(S0, x0, r0)
     # Integrate the SIR-PH equations over the time grid, t.
-    ret = integrate.odeint(deriv, y0, times, args=(beta, n, alpha, A, a), tfirst=True)
+    ret = integrate.odeint(_deriv, y0, times, args=(beta, n, alpha, A, a), tfirst=True)
     S, x, r = np.split(ret, [1, n + 1], axis=1)
 
     S = S.flatten()
@@ -127,4 +135,7 @@ def sir_phg(
         result["data"] = pd.concat([result["data"], rdf], axis=1)
         result["R-columns"] = rdf.columns.values.tolist()
     result["total_infected"] = get_total_infected(effective_r0, S0)
+    result["name"] = name
+    result["population"] = population
+
     return result

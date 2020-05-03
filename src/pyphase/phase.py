@@ -115,7 +115,7 @@ class PhaseTypeGen(rv_continuous):
 
 
 phase = PhaseTypeGen
-
+phase.__doc__ = rv_continuous.__doc__
 
 def ph_expon(lambd=None, mean=None):
     return ph_erlang(1, lambd, mean)

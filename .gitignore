@@ -64,6 +64,8 @@ instance/
 
 # Sphinx documentation
 docs/_build/
+# docs/epistoch*.rst
+# docs/pyphase*.rst
 
 # PyBuilder
 target/

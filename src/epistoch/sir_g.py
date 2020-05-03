@@ -20,7 +20,7 @@ EPS = 1e-5
 
 
 # The SIR model differential equations.
-def deriv(t, y, beta, gam):
+def _sir_deriv(t, y, beta, gam):
     S, I = y
     dSdt = -beta * S * I
     dIdt = beta * S * I - gam * I
@@ -28,12 +28,15 @@ def deriv(t, y, beta, gam):
 
 
 def sir_classical(
-    population=1000, reproductive_factor=2.0, infectious_period_mean=10, I0=1.0, S0=None, num_days=160, use_odeint=True,
+    name, population, reproductive_factor, infectious_period_mean, num_days, I0=1.0, S0=None, use_odeint=True,
 ):
     """
-    Solves a classical SIR model
+    Solves a classical SIR model.
+
     Parameters
     ----------
+    name: string
+        Model name
     population: float
         total population size
     reproductive_factor: float
@@ -46,24 +49,28 @@ def sir_classical(
         Initial susceptible population (optinal, defaults to all but I0)
     num_days: int
         number of days to run
-    use_odeint: bool
 
 
     Returns
     -------
-    A dictionary with these fields:
-        data: DataFrame with columns S, I, R
-        total_infected: estimation of total infected individuals
-
-    Note: Code based on
-    https://scipython.com/book/chapter-8-scipy/additional-examples/the-sir-epidemic-model/
+    dict
+        Dictionary with fields:
+            - name: model name
+            - population: Total population
+            - total_infected
+            - data: data Frame with columns
+                - S : Susceptible,
+                - I : Infectious (Dying or recovering),
+                - R : Removed (recovered + deaths),
     """
+    # Note: Code based on
+    # https://scipython.com/book/chapter-8-scipy/additional-examples/the-sir-epidemic-model/
     # Total population, N.
     N = population
     # Initial number of infected and recovered individuals, I0 and R0.
     I0 = I0 / N
     S0 = S0 / N if S0 is not None else 1 - I0
-    R0 = 1 - I0 - S0
+    # Note that R0 = 1 - I0 - S0
 
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1.0 / infectious_period_mean
@@ -75,30 +82,27 @@ def sir_classical(
     # Initial conditions vector
     y0 = [S0, I0]
     # Integrate the SIR equations over the time grid, t.
-    if use_odeint:
-        ret = integrate.odeint(deriv, y0, times, args=(beta, gam), tfirst=True)
-        S, I = ret.T
-    else:
-        sol = integrate.solve_ivp(
-            fun=deriv, t_span=[0, num_days], y0=y0, args=(beta, gam), t_eval=times, vectorized=True,
-        )
-        times = sol.t
-        S, I = sol.y
+    ret = integrate.odeint(_sir_deriv, y0, times, args=(beta, gam), tfirst=True)
+    S, I = ret.T
+    # De-normalize
     S = S * N
     I = I * N
     R = N - S - I
     result = dict()
     result["data"] = pd.DataFrame(data={"Day": times, "S": S, "I": I, "R": R}).set_index("Day")
     result["total_infected"] = get_total_infected(reproductive_factor)
+    result["population"] = N
+    result["name"] = name
     return result
 
 
 def compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method="loss"):
-    """
-    Computes
-    int_0^t g(t-x) I(x)S(x) dx
-    for t = n*delta
+    r"""
+    Compute the integral needed for the integro-differential model.
 
+    In other words, computes
+
+    .. math:: \int_0^t g(t-x) I(x)S(x) dx \quad  \text{ for } t = n*delta
 
     Parameters
     ----------
@@ -113,7 +117,7 @@ def compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method=
 
     Returns
     -------
-    Integral value
+    Value of the integral
 
     """
     if n == 0:
@@ -140,46 +144,55 @@ def compute_integral(n, delta, S, I, times, survival, pdfs, loss1, dist, method=
 
 
 def sir_g(
-    population=1000,
-    reproductive_factor=2.0,
-    infectious_time_distribution=stats.expon(scale=10),
+    name,
+    population,
+    reproductive_factor,
+    infectious_time_distribution,
+    num_days,
     I0=1.0,
     S0=None,
-    num_days=160,
     num_periods=None,
     method="loss",
     logger=None,
 ):
     """
-    Solves a SIR-G model
+    Solves a SIR-G model.
+
     Parameters
     ----------
+    name: string
+        Model name
     population: float
         total population size
     reproductive_factor: float
         basic reproductive factor(R0)
     infectious_time_distribution: scipy.stats.rv_continuous
         expected value of Infectious Period Time
+    num_days: int
+        number of days to run
     I0: float
         Initial infectious population
     S0: float
-        Initial susceptible population (optinal, defaults to all but I0)
-    num_days: int
-        number of days to run
+        Initial susceptible population (optional, defaults to all but I0)
     num_periods:int
         Number of periods to use for computations. Higher number will lead ot more precise computation.
     method: string
         Method used for the internal integral
     logger
         Logger object
+
     Returns
     -------
-    A dictionary with these fields:
-        data: DataFrame with columns S, I, R
-        total_infected: estimation of total infected individuals
-
+    dict
+        Dictionary with fields:
+            - name: model name
+            - population: Total population
+            - total_infected
+            - data: data Frame with columns
+                - S : Susceptible,
+                - I : Infectious (Dying or recovering),
+                - R : Removed (recovered + deaths),
     """
-
     if logger is None:
         logger = logging.getLogger(__name__)
         logger.setLevel(logging.INFO)
@@ -189,7 +202,7 @@ def sir_g(
 
     I0 = I0 / N
     S0 = S0 / N if S0 is not None else 1 - I0
-    R0 = 1 - I0 - S0
+    # Notice that R0 = 1 - I0 - S0
 
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1 / dist.mean()
@@ -198,13 +211,16 @@ def sir_g(
     num_periods = 10 * num_days if num_periods is None else num_periods
     delta = num_days / num_periods
     times = np.linspace(start=0.0, stop=num_days, num=num_periods + 1)
+    logging.info("Computing survival function")
     survival = dist.sf(times)
+    logging.info("Computing PDF function")
     pdfs = dist.pdf(times)
     if pdfs[0] == math.inf:
         pdfs[0] = dist.pdf(dist.ppf(0.01))
     survival = dist.sf(times)
     if survival[0] < 1.0 - EPS:
         logging.warning(f"Survival function does not start in 1:  {survival}")
+    logging.info("Computing Loss1 function")
     loss_fun = loss_function(dist)
     loss1 = loss_fun(times)
 
@@ -229,12 +245,34 @@ def sir_g(
     I = N * interpolate.interp1d(times, I)(days)
     R = N - S - I
     result = dict()
+    result["name"] = name
+    result["population"] = population
     result["data"] = pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
     result["total_infected"] = get_total_infected(reproductive_factor)
     return result
 
 
 def get_total_infected(reproductive_factor, normalzed_s0=1):
+    r"""
+    Estimate the total number of infected for a given reproductive factor.
+
+    Find the value z that solves
+
+    ..math 1-z = S_0 * e^{{\mathcal R} z}
+
+    Parameters
+    ----------
+    reproductive_factor : float
+        Basic reproductive factor.
+    normalzed_s0 : float, optional
+        Initial fraction of population that is infected. The default is 1.
+
+    Returns
+    -------
+    float
+        The stimated fraction of toal infected.
+
+    """
     if reproductive_factor < 1:
         return 0.0
     else:
@@ -243,25 +281,54 @@ def get_total_infected(reproductive_factor, normalzed_s0=1):
         return result.root
 
 
-def get_array_error(name, x1, x2, N=1, do_print=True):
+def _compute_array_error(name, x1, x2, N, do_print=True):
+    # Convenience method to compute the error difference in tow array
     error = np.abs(x1 - x2) / N
     if do_print:
         print(f"{name}: max error = {np.max(error):.2}, avg error = {np.mean(error):.2}")
     return np.max(error)
 
 
-def get_error(model1, model2, N, do_print=True):
-    error_i = get_array_error("I", model1["data"].I, model2["data"].I, N, do_print)
-    error_s = get_array_error("S", model1["data"].S, model2["data"].S, N, do_print)
+def _compute_error(model1, model2, N, do_print=True):
+    # Convenience methods to compute errors between two models
+    if model1["population"] != model2["population"]:
+        raise ValueError("We can compare only models with the same population")
+    N = model1["population"]
+    error_i = _compute_array_error("I", model1["data"].I, model2["data"].I, N, do_print)
+    error_s = _compute_array_error("S", model1["data"].S, model2["data"].S, N, do_print)
     return 0.5 * (error_i + error_s)
 
 
-def print_error(model1, model2, N):
-    return get_error(model1, model2, N, True)
+def print_error(model1, model2):
+    """
+    Print error difference between two models
+
+    Parameters
+    ----------
+    model1
+        Result of a SIR, SIR_G model
+    model2
+        Result of a SIR, SIR_G model
+
+    Returns
+    -------
+
+    """
+    return _compute_error(model1, model2, True)
 
 
-def report_summary(name, result, N):
+def report_summary(result):
+    """
+    Report a summary for a model.
+
+    Parameters
+    ----------
+    result:
+        Result from SIR like model
+    """
     model = result["data"]
+    name = result["name"]
+    N = result["population"]
     n = len(model) - 1
     print(f"Model {name} Summary")
     print(f"  Total Infected People: {int(model.R[n]):,d} ({model.R[n]/N:.2%})")

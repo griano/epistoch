@@ -12,29 +12,62 @@ from pyphase.phase import ph_erlang, ph_mix, ph_sum
 
 
 def seird_ph(
-    population=1000,
-    beta=0.2,
-    exposed_time=ph_erlang(n=3, mean=14),
-    die_time=ph_erlang(n=2, mean=7),
-    recover_time=ph_erlang(n=4, mean=12),
-    fatality_rate=0.2,
-    I0=1,
-    num_days=250,
-    logger=None,
+    name, population, beta, exposed_time, time_to_die, time_to_recover, fatality_rate, num_days, I0=1, logger=None,
 ):
+    """
+    Compute a SEIRD model with Phase-Type distribution for the different stages.
 
-    second_stage = ph_mix(die_time, recover_time, fatality_rate)
+    Parameters
+    ----------
+    name : string
+        Model name.
+    population : int or float
+        Population size.
+    beta : float
+        Contagion rate.
+    exposed_time : PH distribution
+        Distribution of time exposed, not yet infectious.
+    time_to_die : PH distribution
+        Time to die after becoming infectious.
+    time_to_recover : PH distribution
+        Time to recover after becoming infectious.
+    fatality_rate : float
+        Percentage of individuals that die.
+    num_days : int
+        Number of days ot analyze.
+    I0 : int, optional
+        Initial infected population. The default is 1.
+    logger : Logger object, optional
+        Logger object. If not given default logging is used.
+
+    Returns
+    -------
+    result : dict
+        Dictionary with fields:
+            - name: model name
+            - population: Total population
+            - data: data Frame with columns
+                - S : Susceptible,
+                - E : Exposed,
+                - I : Infectious (Dying or recovering),
+                - Rc : Total Recovered,
+                - D : Total deaths
+                - R : Removed (R+D),
+    """
+
+    second_stage = ph_mix(time_to_die, time_to_recover, fatality_rate)
     total_time = ph_sum(exposed_time, second_stage)
     print(total_time)
 
     _, _, ae, ne = exposed_time.params()
-    _, _, ad, nd = die_time.params()
-    _, _, ar, nr = recover_time.params()
+    _, _, ad, nd = time_to_die.params()
+    _, _, ar, nr = time_to_recover.params()
 
     beta = beta * np.concatenate([np.zeros(ne), np.ones(nd), np.ones(nr)])
     print(beta)
 
     result = sir_phg(
+        name,
         population=population,
         beta=beta,
         infectious_time_distribution=total_time,
@@ -55,4 +88,7 @@ def seird_ph(
     data["I"] = data["I"] - data["E"]  # Actual infectious
     data = data.drop(columns=result["I-columns"] + result["R-columns"])
     result["data"] = data
+    result["Name"] = name
+    result["population"] = population
+
     return result

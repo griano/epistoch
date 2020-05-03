@@ -1,4 +1,4 @@
-Welcome to EpiStoch's documentation!
+EpiStoch's documentation!
 ======================================
 
 .. toctree::
@@ -15,6 +15,7 @@ Welcome to EpiStoch's documentation!
 
 Indices and tables
 ==================
+
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
