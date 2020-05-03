@@ -10,8 +10,7 @@ deploy:
   edge: true
   distributions: sdist bdist_wheel
   user: griano
-  password:
-    secure: pz2EXdUD5bcgS5wOB2kHkR8vvmR3CHyIhesBUhthkpXiKj7xA0SFp83Lyc7zrFUe3mRDyw5xnM21S8RWQo6TTAE+friudAMeCFNKGRYxA/doHTkQ0NzHDhOCRdkfxh2ckQeLtEahhgYfmGxLS5OgQLDS7wVK7snCag0BuQkHUHYiGtR9Ob6euUMOureiQd66Wh2izZ2ZXgSggJkDxKaA/3msE6KBEF66J47dwLUMSBnp223ggjXcMoRIvtQcUhF5Zwpf2u0gMUw6j9zEPdUL1q6huMQDmwdbBStjTE9lM7G4X/MaHxrxlWcmamQBscCYifuend09IRrunU6UUjWuiqJi2TgKxyGLU8655zzHTVFGrm9/pbGEBb1Fw4xjf3rWJ+qEm1PfZfdlfoi1+s7f3OUcBKKO5VZT8GUMft8h5rY87yr9Ttx6Nza8NR83/JhVn5vuhiYRH+m/xLxQmQjqeDxi7zKHvT0qnJzpcXbkTWwi47UYPD/k2IXDbkuf+j4eRxnDJPFJb0/+fa689iOv1kFdq1VphKZ8Nyy7nommb0LOuBAkSFAMKcwVNywZ4Wx+JR2QxcT5Yx37Mcb3dAti30TvcXtvtFIIPg3PrGRHd+E9QkrHVbHN46jHNHqSwdgRW59AmdHvUic8Xi7P2yjZwGfTElL9+lMG+mrIG9hyWg0=
+  password: $PYPI_PASSWORD
   on:
     tags: true
     repo: griano/epistoch
