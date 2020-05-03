@@ -18,8 +18,11 @@ script: tox
 # $ travis encrypt --add deploy.password
 deploy:
   provider: pypi
+  # ⋮
+  edge: true
   distributions: sdist bdist_wheel
   user: griano
+  password: $PYPI_PASSWORD
   on:
     tags: true
     repo: griano/epistoch
