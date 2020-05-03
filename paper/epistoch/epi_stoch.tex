@@ -260,7 +260,7 @@
 \newcommand{\phm}{\ensuremath\phantom{-}\xspace}
 \newcommand{\Ro}{\ensuremath\mathcal{R}_0\xspace}
 \newcommand{\Ri}{\ensuremath{R}_\infty\xspace}
-
+\pdfsuppresswarningpagegroup=1
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DOCUMENT
@@ -275,7 +275,8 @@
 
 %% The simple version:
 \title{Epidemic Models with Random Infectious Period}
-\author{Germ\'an Ria\~no}
+\author{Germ\'an Ria\~no \\ \href{mailto:griano@germanriano.com}{griano@germanriano.com}}
+
 %\date{} %%If commented, the current date is used.
 \maketitle
 
@@ -493,7 +494,7 @@ In the most simple algorithm, we sub-divide the time line in intervals of size $
 Of course, the difficult part is computing the integral. Notice that this integral depends only on parts of $I(t)$ and $S(t)$ that already have been computed, but the function is only known at discrete points.
 One could use a computation scheme like Simpson rule, readily available in many libraries like SciPy \cite{jon.ea.01}. However, for some distributions, $g(t)$ can be very high close to $t=0$. Therefore we devised a robust algorithm to compute the integral, converting $I(t)S(t)$ into a piece wise linear function and then computing the exact integral. Let $B(t)\equiv S(t)I(t)$. Notice that the integral can be written as
 \[ \int_0^{t} g(t-\tau) S(\tau)I(\tau)d\tau = \E{B(t-T)}.  \]
-Therefore, we can frame this problem as finding the expected value of a piece-wise linear function $f(x)=B(t-x)$ (since $t$ is fixed). See the details in Appendix \ref{app:piecewise}.
+Therefore, we can frame this problem as finding the expected value of a piece-wise linear function $f(x)=B(t-x)$ (since $t$ is fixed). See the details in Appendix \ref{app:piecewise}. Our implementation is available at \url{https://github.com/griano/epistoch}
 
 \section{Numerical Experiments}\label{sc:numerical}
 

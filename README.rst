@@ -17,21 +17,16 @@ EpiStoch
 
 
 Epidemics Models with Random Infectious Period
+================================================
+
+This software allows you to model epidemics with general random distribution for the infectious period.
 
 
+* Paper_
+* Manual: https://epistoch.readthedocs.io.
 * Free software: MIT license
-* Documentation: https://epistoch.readthedocs.io.
 
 
-Features
---------
 
-* TODO
 
-Credits
--------
-
-This package was created with Cookiecutter_ and the `audreyr/cookiecutter-pypackage`_ project template.
-
-.. _Cookiecutter: https://github.com/audreyr/cookiecutter
-.. _`audreyr/cookiecutter-pypackage`: https://github.com/audreyr/cookiecutter-pypackage
+.. _Paper: https://github.com/griano/epistoch/blob/master/paper/epistoch/epi_stoch.pdf
