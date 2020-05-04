@@ -40,7 +40,7 @@ def compare_models(name, dist, N=1000000, I0=1, num_days=100, R0=2.25, do_plots=
     print_error(SIR_classic, SIR_general)
 
     if do_plots:
-        fig = plot_sir(SIR_classic, title=name + ": SIR and SIR-G models")
+        fig = plot_sir(SIR_classic, title=name + ": SIR and SIR-G models", use_latex=True)
         plot_sir(SIR_general, fig, linestyle="--")
         plt.show()
         filename = os.path.join("./paper/epistoch/figures/", name + "-SIR-comp.pdf")

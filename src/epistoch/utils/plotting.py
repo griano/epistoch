@@ -7,12 +7,17 @@ Created on Tue Apr 21 17:14:05 2020
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
-plt.rc("text", usetex=True)
-plt.rc("font", **{"family": "serif", "sans-serif": ["Palatino"]})
-plt.set_loglevel("info")
+def set_plt_for_latex():
+    plt.rc("text", usetex=True)
+    plt.rc("font", **{"family": "serif", "sans-serif": ["Palatino"]})
+    plt.set_loglevel("info")
 
 
-def prepare_plot(title):
+def prepare_plot(title, use_latex=False):
+
+    if use_latex:
+        set_plt_for_latex()
+
     fig = plt.figure(facecolor="w")
     # use LaTeX fonts in the plot
 
@@ -33,6 +38,7 @@ def plot_sir(
     title=None,
     formats={"S": "b-", "I": "r-", "R": "g-"},
     legend_fmt={"loc": "best", "shadow": True},
+    use_latex=False,
     **kwd,
 ):
     data = model["data"]
@@ -41,7 +47,7 @@ def plot_sir(
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     if fig is None:
         title = name if title is None else title
-        fig, ax = prepare_plot(title)
+        fig, ax = prepare_plot(title, use_latex)
     else:
         allaxes = fig.get_axes()
         ax = allaxes[0]
@@ -57,14 +63,14 @@ def plot_sir(
     return fig
 
 
-def plot_IR(model, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best", "shadow": True}):
+def plot_IR(model, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best", "shadow": True}, use_latex=False):
     # Plot the data on three separate curves for S(t), I(t) and R(t)
     data = model["data"]
     name = model["name"]
     N = model["population"]
     if fig is None:
         title = name if title is None else title
-        fig, ax = prepare_plot(title)
+        fig, ax = prepare_plot(title, use_latex)
     else:
         allaxes = fig.get_axes()
         ax = allaxes[0]
