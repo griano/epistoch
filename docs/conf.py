@@ -15,9 +15,8 @@
 import os
 import sys
 
-import epistoch
-
 sys.path.insert(0, os.path.abspath("../src"))
+import epistoch
 
 
 # -- Project information -----------------------------------------------------
@@ -90,9 +89,9 @@ pygments_style = None
 # a list of builtin themes.
 #
 # html_theme = "alabaster"
-# html_theme = 'agogo'
+html_theme = 'agogo'
 # html_theme = 'mozilla-sphinx-theme'
-html_theme = "nature"
+# html_theme = "nature"
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.

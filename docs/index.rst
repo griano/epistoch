@@ -1,4 +1,4 @@
-EpiStoch's documentation!
+EpiStoch's Documentation
 ======================================
 
 .. toctree::
