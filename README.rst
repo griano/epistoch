@@ -22,9 +22,12 @@ Epidemics Models with Random Infectious Period
 This software allows you to model epidemics with general random distribution for the infectious period.
 
 
+
 * Paper_
-* Manual: https://epistoch.readthedocs.io.
-* Free software: MIT license
+* Documentation: https://epistoch.readthedocs.io.
+* Free software: MIT license. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+  EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
 
 
 

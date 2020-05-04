@@ -2,7 +2,7 @@ EpiStoch's Documentation
 ======================================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
    :caption: Contents:
 
    readme
