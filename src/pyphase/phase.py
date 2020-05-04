@@ -12,32 +12,26 @@ from scipy.stats import rv_continuous
 
 
 class PhaseTypeGen(rv_continuous):
-    def __init__(self, alpha, A, prec=None):
+    def _set_pars(self, alpha, A):
         alpha = ml.mat(alpha)
         A = ml.mat(A)
-        super(PhaseTypeGen, self).__init__(
-            momtype=1,
-            a=0,
-            b=None,
-            xtol=1e-14,
-            badvalue=None,
-            name="phase",
-            longname=None,
-            shapes=None,
-            extradoc=None,
-            seed=None,
-        )
         self.alpha = alpha
         self.A = A
         self.alphaAi = None  # alpha * A^(-1), computed lazily
         self.erd = None  # Equilibrium residual distribution
 
+    def _cdf1(self, x):
+        return 1.0 - np.sum(self.alpha @ linalg.expm(self.A.A * x), axis=1) if x > 0 else 0.0
+
     def _cdf(self, x):
-        return np.asarray([1.0 - np.sum(self.alpha @ linalg.expm(self.A.A * xv), axis=1) for xv in x])
+        return np.vectorize(self._cdf1)(x)
+
+    def _pdf1(self, x):
+        res = self.alpha @ linalg.expm(self.A.A * x) @ self._get_a() if x >= 0 else 0.0
+        return res
 
     def _pdf(self, x):
-        res = np.asarray([self.alpha @ linalg.expm(self.A.A * xv) @ self._get_a() for xv in x]).flatten()
-        return res
+        return np.vectorize(self._pdf1)(x)
 
     def _moments(self, k=None):
         if k is None:
@@ -114,8 +108,15 @@ class PhaseTypeGen(rv_continuous):
         return f"PH({self.alpha.__repr__()}, {self.A.__repr__()})"
 
 
-phase = PhaseTypeGen
-phase.__doc__ = rv_continuous.__doc__
+def phase(alpha, A):
+    generator = PhaseTypeGen(name="phase")
+    frozen = generator.__call__()
+    frozen.dist._set_pars(alpha, A)
+    frozen.equilibrium_pi = frozen.dist.equilibrium_pi
+    frozen.loss1 = frozen.dist.loss1
+    frozen.params = frozen.dist.params
+    return frozen
+
 
 def ph_expon(lambd=None, mean=None):
     return ph_erlang(1, lambd, mean)
