@@ -10,13 +10,13 @@ with open("README.rst") as readme_file:
 with open("HISTORY.rst") as history_file:
     history = history_file.read()
 
-requirements = ["numpy>=1.18", "matplotlib>=3.1", "scipy>=1.4", "pandas>=1.0.3", "tqdm>=4.46.0"]
+requirements = ["numpy>=1.18", "matplotlib>=3.2", "scipy>=1.4", "pandas>=1.0.3", "tqdm>=4.46.0"]
 
 setup_requirements = [
     "pytest-runner",
 ]
 
-test_requirements = ["pytest>=5.4", "pytest-cov>=2.8"]
+test_requirements = ["pytest>=5.4", "pytest-cov>=2.8", "pytest-runner>=5.2"]
 
 setup(
     author="Germán Riaño",
