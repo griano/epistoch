@@ -10,16 +10,34 @@ import math
 
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from scipy import integrate, interpolate, stats
 from tqdm import tqdm
 
 import epistoch.utils as utils
-from epistoch.sir_g import EPS, _compute_array_error, _sir_deriv, compute_integral, print_error, sir_g
+from epistoch import compute_integral, get_total_infected, sir_classical
+from epistoch.sir_g import EPS, _sir_deriv, sir_g
+from epistoch.utils.plotting import plot_sir
 from epistoch.utils.stats import loss_function
+from epistoch.utils.utils import _compute_array_error, print_error
 
 
-def deriv2(
-    t, y, beta, gam, I0, times, delta, S_guess, I_guess, survival, pdfs, loss1, dist, method,
+def _deriv2(
+    # Derivatives for second step. S and I are fixed.
+    t,
+    y,
+    beta,
+    gam,
+    I0,
+    times,
+    delta,
+    S_guess,
+    I_guess,
+    survival,
+    pdfs,
+    loss1,
+    dist,
+    method,
 ):
     # This function does not depend on y, but it depends on t
     # We buid piece-wise linear functions
@@ -32,19 +50,20 @@ def deriv2(
     n = int(np.floor(t / delta))
     integral = compute_integral(n, delta, S_guess, I_guess, times, survival, pdfs, loss1, dist, method)
     dIdt = -dSdt - beta * integral - gam * I0 * survival[n]
-    # compute_integral(n, delta, S_guess, I_guess, survival, delta_loss)
-    # print(f"S'({t})={dSdt}  I'({t})={dIdt}")
+
     return dSdt, dIdt
 
 
-def stochasticSIR2(
-    population=1000,
-    reproductive_factor=2.0,
-    disease_time_distribution=stats.expon(scale=10),
+def sir_g2(
+    name,
+    population,
+    reproductive_factor,
+    infectious_time_distribution,
+    num_days,
     I0=1.0,
-    R0=0.0,
-    num_days=160,
-    num_periods=2000,
+    S0=None,
+    num_periods=None,
+    method="loss",
     logger=None,
 ):
     if logger is None:
@@ -53,16 +72,16 @@ def stochasticSIR2(
 
     # Total population, N.
     N = population
-    dist = disease_time_distribution
+    dist = infectious_time_distribution
     # Normailize to imporve numerical stability
     I0 = I0 / N
-    R0 = R0 / N
-    # Everyone else, S0, is susceptible to infection initially.
-    S0 = 1 - I0 - R0
+    S0 = S0 / N if S0 is not None else 1 - I0
+    # Notice that R0 = 1 - I0 - S0
+
     # Contact rate, beta, and mean recovery rate, gam, (in 1/days).
     gam = 1 / dist.mean()
     beta = reproductive_factor * gam
-    # A grid of time points (in days)
+    num_periods = 10 * num_days if num_periods is None else num_periods
     delta = num_days / num_periods
     times = np.linspace(start=0.0, stop=num_days, num=num_periods + 1)
     survival = dist.sf(times)
@@ -86,12 +105,23 @@ def stochasticSIR2(
     y0 = [S0, I0]
 
     max_iterations = 100
-    # Integrate the SIR equations over the time grid, t.
-    ret = integrate.odeint(_sir_deriv, y0, times, args=(beta, gam), tfirst=True)
-    old_y = ret.T
-    max_diff = 1e-3
-    alpha = 0.5
-    for iteration in tqdm(range(max_iterations)):
+    logger.info("Computing classical SIR")
+    sir_class = sir_classical(
+        name="Classic",
+        population=1,
+        reproductive_factor=reproductive_factor,
+        infectious_period_mean=dist.mean(),
+        num_days=num_days,
+        I0=I0,
+        times=times,
+    )
+    data = sir_class["data"]
+    old_y = np.asarray((np.asarray(data.S), np.asarray(data.I)))
+    # old_y = np.asarray((.5*np.ones_like (times), .5* np.ones_like (times)))
+    # old_y = np.asarray((np.zeros_like (times), np.zeros_like (times)))
+    max_diff = 1e-6
+    alpha = 0.9
+    for iteration in range(max_iterations):
         S_guess, I_guess = old_y
         # Integrate again, with the integral, fixing guess
         args = (
@@ -108,10 +138,14 @@ def stochasticSIR2(
             dist,
             "loss",
         )
-        ret2 = integrate.odeint(func=deriv2, y0=y0, t=times, args=args, tfirst=True)
+        logger.debug(f"Staring iteration {iteration:d}")
+        ret2 = integrate.odeint(func=_deriv2, y0=y0, t=times, args=args, tfirst=True)
         y = ret2.T
         S, I = y
-        diff = _compute_array_error("I", I_guess, I, do_print=False)
+        diff = _compute_array_error("I", I_guess, I, N, do_print=False)
+        if logger.isEnabledFor(logging.DEBUG):
+            pd.DataFrame(data={"Times": times, "S": S, "I": I}).set_index("Times").plot()
+            plt.show()
         logger.debug(f"Iteration {iteration:d}: {diff:.4%}")
         if diff < max_diff:
             break
@@ -122,19 +156,55 @@ def stochasticSIR2(
     S = N * interpolate.interp1d(times, S)(days)
     I = N * interpolate.interp1d(times, I)(days)
     R = N - S - I
-    return pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
+    result = dict()
+    result["data"] = pd.DataFrame(data={"Day": days, "S": S, "I": I, "R": R}).set_index("Day")
+    result["total_infected"] = get_total_infected(reproductive_factor)
+    result["population"] = N
+    result["name"] = name
+    return result
 
 
-def test_sir_g2(num_periods=2000):
+def compare_sir_g2(dist, num_periods=2000, logger=None):
     N = 1000
-    dist = utils.stats.get_gamma(10, 2)
-    model1 = sir_g(population=N, infectious_time_distribution=dist, num_periods=num_periods)
-    model2 = stochasticSIR2(population=N, disease_time_distribution=dist, num_periods=num_periods)
-    model1.plot()
-    model2.plot()
-    print_error(model1, model2, N)
+    reproductive_factor = 2.2
+    num_days = 160
+    model0 = sir_classical(
+        "SIR_CL",
+        population=N,
+        reproductive_factor=reproductive_factor,
+        infectious_period_mean=dist.mean(),
+        num_days=num_days,
+    )
+    model1 = sir_g(
+        "SIR_G",
+        population=N,
+        reproductive_factor=reproductive_factor,
+        infectious_time_distribution=dist,
+        num_days=num_days,
+        num_periods=num_periods,
+        logger=None,
+    )
+    model2 = sir_g2(
+        "SIR_G2",
+        population=N,
+        reproductive_factor=reproductive_factor,
+        infectious_time_distribution=dist,
+        num_days=num_days,
+        num_periods=num_periods,
+        logger=logger,
+    )
+    print_error(model1, model2)
+    fig = plot_sir(model1)
+    plot_sir(model2, fig=fig, linestyle="--")
+    plot_sir(model0, fig=fig, linestyle=":")
+    plt.show()
+
+
+def test_sir_g2(dist=utils.stats.get_gamma(10, 2), num_periods=2000, logger=None):
+    compare_sir_g2(dist, num_periods, logger)
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.DEBUG)
-    test_sir_g2()
+    logger = logging.getLogger()
+    logger.setLevel(logging.DEBUG)
+    test_sir_g2(dist=utils.stats.get_gamma(10, 20), num_periods=2000, logger=logger)

@@ -6,9 +6,10 @@ from matplotlib import pyplot as plt
 from scipy import stats
 
 from epistoch.seird_ph import seird_ph
-from epistoch.sir_g import print_error, report_summary, sir_classical, sir_g
+from epistoch.sir_g import sir_classical, sir_g
 from epistoch.sir_phg import sir_phg
 from epistoch.utils.plotting import plot_sir
+from epistoch.utils.utils import print_error, report_summary
 from pyphase.phase import ph_erlang, ph_expon
 
 

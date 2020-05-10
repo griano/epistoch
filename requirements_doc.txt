@@ -1,7 +1,8 @@
-numpydoc==0.9.2
-mozilla-sphinx-theme==0.2
-matplotlib==3.2.1
+matplotlib==3.1
 numpy==1.18
 scipy==1.4
-pandas==1.0.3
-tqdm==4.45.0
+pandas==1.0
+tqdm==4.46
+
+numpydoc==0.9.2
+sphinx_rtd_theme==0.4.3

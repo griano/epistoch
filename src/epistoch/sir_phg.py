@@ -11,7 +11,7 @@ import pandas as pd
 from numpy import matlib as ml
 from scipy import integrate, interpolate, linalg
 
-from epistoch.sir_g import get_total_infected
+from epistoch.utils.utils import get_total_infected
 from pyphase.phase import ph_expon
 
 EPS = 1e-5
@@ -52,12 +52,12 @@ def sir_phg(
     ----------
     name: string
         Model name
-    population : float, optional
-        Total population. The default is 1000.
+    population : float
+        Total population.
     beta : float, optional
         Contagion rate. The default is 0.2.
-    infectious_time_distribution : phase, optional
-        Must be a PH dstribution. The default is ph_expon(lambd=1 / 10).
+    infectious_time_distribution : phase
+        Must be a PH distribution.
     num_days : int
         Number of days to run.
     I0 : float, optional
@@ -67,19 +67,22 @@ def sir_phg(
     logger : Logger, optional
         Logger object. If none is given, default logging used.
     report_phases : boolean, optional
-        Whether to include phase levels in the report. The default is False.
+        Whether to include phase levels and removed from every level in the report. The default is False.
 
     Returns
     -------
+    dict
     A dictionary with these fields:
+        - name: model name
+        - population: total population
+        - total_infected: estimation of total infected individuals
+        - data: DataFrame with columns
+            - S : Susceptible
+            - I : Infected individuals
+            - R : Removed Individuals
+            - Optionally: I-Phase0,...,I-Phase(n-1), and R-Phase0,...R-Phase(n-1)
 
-        data: DataFrame with columns S, I, R. Optionally: I-Phase0,...,I-Phase(n-1), and R-Phase0,...R-Phase(n-1)
 
-        total_infected: estimation of total infected individuals
-
-        name: model name
-
-        population: total population
     """
     if logger is None:
         logger = logging.getLogger(__name__)

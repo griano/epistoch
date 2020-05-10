@@ -20,7 +20,7 @@ In this example we compute a SIR-G model with Gamma distribution::
     SIR_general = sir_g(
         name="SIR-G-Example",
         population=1000,
-        num_days=160,
+        num_days=230,
         reproductive_factor=2.2,
         infectious_time_distribution=dist,
         method="loss",

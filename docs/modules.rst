@@ -1,8 +1,8 @@
-Modules
-=======
+Reference Manual
+================
 
 .. toctree::
-   :maxdepth: 2
+   :maxdepth: 4
 
    epistoch
    pyphase

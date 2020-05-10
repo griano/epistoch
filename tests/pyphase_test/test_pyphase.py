@@ -25,6 +25,7 @@ def test_ph_gamma():
     a = [1.0, 0.0]
     A = [[-lam, lam], [0, -(lam)]]
     dists = dict()
+    dists["list"] = phase(alpha=a, A=A)
     dists["np"] = phase(alpha=np.array(a), A=np.array(A))
     dists["mat"] = phase(alpha=ml.mat(a), A=ml.mat(A))
     dists["method"] = ph_erlang(2, lam)
@@ -77,7 +78,6 @@ def test_equilibrium_phases():
 #######################################
 #  T E S T I N G
 #######################################
-
 
 if __name__ == "__main__":
     test_equilibrium_phases()

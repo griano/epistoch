@@ -59,22 +59,23 @@ test-all: ## run tests on every Python version with tox
 	tox
 
 coverage: ## check code coverage quickly with the default Python
-	coverage run --source epistoch -m pytest
+	coverage run --source epistoch --source pyphasef -m pytest
 	coverage report -m
 	coverage html
 	$(BROWSER) htmlcov/index.html
 
 docs: ## generate Sphinx HTML documentation, including API docs
-	# rm -f docs/epistoch*.rst
-	# rm -f docs/pyphase*.rst
-	# rm -f docs/modules.rst
-	# sphinx-apidoc -o docs/ src
+	rm -f docs/epistoch*.rst
+	rm -f docs/pyphase*.rst
+	rm -f docs/modules.rst
+	sphinx-apidoc --module-first -H "Reference Manual" -o docs/ src
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
+	$(MAKE) -C docs doctest
 	$(BROWSER) docs/_build/html/index.html
 
 servedocs: docs ## compile the docs watching for changes
-	watchmedo shell-command -p '*.rst' -c '$(MAKE) -C docs html' -R -D .
+	watchmedo shell-command -p '*.py' -c '$(MAKE) -C docs html' -R -D .
 
 release: dist ## package and upload a release
 	twine upload dist/*

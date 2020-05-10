@@ -7,6 +7,7 @@ Created on Tue Apr 21 17:14:05 2020
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 
+
 def set_plt_for_latex():
     plt.rc("text", usetex=True)
     plt.rc("font", **{"family": "serif", "sans-serif": ["Palatino"]})

@@ -17,8 +17,7 @@ import sys
 
 sys.path.insert(0, os.path.abspath("../src"))
 import epistoch
-
-
+import sphinx_rtd_theme
 
 
 # -- Project information -----------------------------------------------------
@@ -48,10 +47,11 @@ extensions = [
     "sphinx.ext.viewcode",
     "sphinx.ext.todo",
     "sphinx.ext.mathjax",
-    "numpydoc",
+    "sphinx.ext.napoleon",
     "sphinx.ext.autosummary",
     "sphinx.ext.doctest",
     "sphinx.ext.inheritance_diagram",
+    "sphinx_rtd_theme",
 ]
 
 # https://stackoverflow.com/questions/12206334/sphinx-autosummary-toctree-contains-reference-to-nonexisting-document-warnings
@@ -91,9 +91,18 @@ pygments_style = None
 # a list of builtin themes.
 #
 # html_theme = "alabaster"
-html_theme = "agogo"
+# html_theme = "agogo"
 # html_theme = 'mozilla-sphinx-theme'
 # html_theme = "nature"
+# html_theme = "sphinxdoc"
+
+html_theme = "sphinx_rtd_theme"
+# html_theme_path = [sphinx_rtd_theme.get_html_theme_path()]
+
+# html_theme_path = [rtcat_sphinx_theme.get_html_theme_path()]
+# html_theme = "rtcat-sphinx-theme"
+
+
 # Theme options are theme-specific and customize the look and feel of a theme
 # further.  For a list of options available for each theme, see the
 # documentation.
