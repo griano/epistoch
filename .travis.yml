@@ -21,7 +21,7 @@ install:
   - conda info -a
   - pip install -U tox-travis
 
-script: tox -v --parallel
+script: tox -v
 deploy:
   provider: pypi
   edge: true
