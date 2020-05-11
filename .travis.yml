@@ -1,4 +1,4 @@
-language: python
+language: generic
 matrix:
   include:
     - python: 3.6
@@ -26,7 +26,7 @@ install:
   - conda info -a
   - pip install -U tox-travis
 
-script: tox
+script: tox -v
 deploy:
   provider: pypi
   edge: true
