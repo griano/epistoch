@@ -12,7 +12,6 @@ from numpy import matlib as ml
 from scipy import integrate, interpolate, linalg
 
 from epistoch.utils.utils import get_total_infected
-from pyphase.phase import ph_expon
 
 EPS = 1e-5
 

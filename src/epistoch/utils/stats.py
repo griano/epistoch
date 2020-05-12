@@ -14,7 +14,7 @@ from scipy import integrate, stats
 
 def get_lognorm(mu, sigma):
     """
-    Builds a lognormal distribution from mean and standard deviation for this 
+    Builds a lognormal distribution from mean and standard deviation for this
     variable. (Not the mean and sd of the corresponding normal)
 
     Parameters
@@ -38,7 +38,7 @@ def get_lognorm(mu, sigma):
 
 def get_gamma(mu, sigma):
     """
-    Builds a gamma distribution from mean and standard deviation for this 
+    Builds a gamma distribution from mean and standard deviation for this
     variable.
 
     Parameters
@@ -82,7 +82,7 @@ def loss_function(dist, force=False):
     dist : scipy.stats._distn_infrastructure.rv_froze
         a distribution object form scipy.stats
     force : boolean
-        whether force an integral computation instead of known formula        
+        whether force an integral computation instead of known formula
 
     Returns
     -------

@@ -8,7 +8,7 @@ Created on Sun Apr 26 21:50:11 2020
 import numpy as np
 
 from epistoch.sir_phg import sir_phg
-from pyphase.phase import ph_erlang, ph_mix, ph_sum
+from pyphase.phase import ph_mix, ph_sum
 
 
 def seird_ph(

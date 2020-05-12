@@ -64,7 +64,7 @@ def test_loss1():
     lambd = 0.5
     v1 = ph_expon(lambd)
     x = np.linspace(1, 5, 1)
-    exp_loss1 = lambda x: np.exp(-lambd * x) / lambd  # Noqa 731
+    exp_loss1 = lambda x: np.exp(-lambd * x) / lambd  # noqa: 731
     np.testing.assert_allclose(v1.loss1(x), exp_loss1(x))
 
 

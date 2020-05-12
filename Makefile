@@ -50,7 +50,7 @@ clean-test: ## remove test and coverage artifacts
 lint: ## check style with flake8
 	isort -y
 	black -l 120 .
-	flake8 epistoch tests
+	flake8
 
 test: ## run tests quickly with the default Python
 	pytest

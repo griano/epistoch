@@ -11,12 +11,11 @@ import math
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt
-from scipy import integrate, interpolate, stats
-from tqdm import tqdm
+from scipy import integrate, interpolate
 
 import epistoch.utils as utils
 from epistoch import compute_integral, get_total_infected, sir_classical
-from epistoch.sir_g import EPS, _sir_deriv, sir_g
+from epistoch.sir_g import EPS, sir_g
 from epistoch.utils.plotting import plot_sir
 from epistoch.utils.stats import loss_function
 from epistoch.utils.utils import _compute_array_error, print_error
