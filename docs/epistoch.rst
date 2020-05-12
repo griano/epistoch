@@ -12,7 +12,6 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   epistoch.experimental
    epistoch.utils
 
 Submodules
@@ -49,4 +48,3 @@ epistoch.sir\_phg module
    :members:
    :undoc-members:
    :show-inheritance:
-

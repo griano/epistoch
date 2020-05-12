@@ -57,9 +57,7 @@ def plot_sir(
         series = data[s] / N
         linewidth = kwd.get("linewidth", 2)
         linestyle = kwd.get("linestyle", "-")
-        ax.plot(
-            t, series, fmt, alpha=0.8, lw=linewidth, linestyle=linestyle, label=f"{s} - {name}",
-        )
+        ax.plot(t, series, fmt, alpha=0.8, lw=linewidth, linestyle=linestyle, label=f"{s} - {name}")
     ax.legend(**legend_fmt)
     return fig
 
@@ -75,11 +73,7 @@ def plot_IR(model, fig=None, linestyle="-", title=None, legend_fmt={"loc": "best
     else:
         allaxes = fig.get_axes()
         ax = allaxes[0]
-    ax.plot(
-        data.S / N, data.R / N, "g", alpha=0.8, lw=2, linestyle=linestyle, label="Removed - " + name,
-    )
-    ax.plot(
-        data.S / N, data.I / N, "b", alpha=0.8, lw=2, linestyle=linestyle, label="Infected - " + name,
-    )
+    ax.plot(data.S / N, data.R / N, "g", alpha=0.8, lw=2, linestyle=linestyle, label="Removed - " + name)
+    ax.plot(data.S / N, data.I / N, "b", alpha=0.8, lw=2, linestyle=linestyle, label="Infected - " + name)
     ax.legend(**legend_fmt)
     return fig

@@ -33,9 +33,10 @@ The number of individuals that get infected, however, remains thesame for both m
 
 Models
 ------
-* SIR_G: Like the classical SIR model, but with an arbitrary distribution.
-* SIR-PH: A SIR model with Phase-Type distributions for the infectious period
-* SEIRD: A SEIRD Model with hase-Type distributions for each stage.
+* SIR: Classical SIR model, with (implied) exponential infectious period.  :py:func:`epistoch.sir_g.sir_classical`
+* SIR_G: Like the classical SIR model, but with an arbitrary distribution. :py:func:`epistoch.sir_g.sir_g`
+* SIR-PHG: A SIR model with Phase-Type distributions for the infectious period. :py:func:`epistoch.sir_phg.sir_phg`
+* SEIRD: A SEIRD Model with hase-Type distributions for each stage. :py:func:`epistoch.seird_ph.seird_ph`
 
 
 Notes

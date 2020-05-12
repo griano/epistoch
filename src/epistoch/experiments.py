@@ -17,7 +17,7 @@ def compare_models(
 ):
     name1 = "SIR"
     SIR_classic = sir_classical(
-        name=name1, population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=dist.mean(), num_days=num_days,
+        name=name1, population=N, I0=I0, reproductive_factor=R0, infectious_period_mean=dist.mean(), num_days=num_days
     )
 
     name2 = "SIR-G"
@@ -75,7 +75,7 @@ def variance_analysis(
         infectious_period_mean=infectious_period_mean,
         num_days=num_days,
     )
-    fig = plot_sir(sir_classic, formats={"I": "r-"}, title="SIR-G with Different Distributions", linewidth=3,)
+    fig = plot_sir(sir_classic, formats={"I": "r-"}, title="SIR-G with Different Distributions", linewidth=3)
 
     print("Computing Constant SIR-G")
     dist = utils.stats.constant(infectious_period_mean)

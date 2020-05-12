@@ -15,10 +15,9 @@
 import os
 import sys
 
-sys.path.insert(0, os.path.abspath("../src"))
-
-import sphinx_rtd_theme
 import epistoch
+
+sys.path.insert(0, os.path.abspath("../src"))
 
 
 # -- Project information -----------------------------------------------------
@@ -152,9 +151,7 @@ latex_elements = {
 # Grouping the document tree into LaTeX files. List of tuples
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
-latex_documents = [
-    (master_doc, "src.tex", "src Documentation", "Author", "manual"),
-]
+latex_documents = [(master_doc, "src.tex", "src Documentation", "Author", "manual")]
 
 
 # -- Options for manual page output ------------------------------------------
@@ -170,7 +167,7 @@ man_pages = [(master_doc, "src", "src Documentation", [author], 1)]
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, "src", "src Documentation", author, "src", "One line description of project.", "Miscellaneous"),
+    (master_doc, "src", "src Documentation", author, "src", "One line description of project.", "Miscellaneous")
 ]
 
 

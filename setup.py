@@ -12,9 +12,7 @@ with open("HISTORY.rst") as history_file:
 
 requirements = ["numpy>=1.18", "matplotlib>=3.2", "scipy>=1.4", "pandas>=1.0.3", "tqdm>=4.46.0"]
 
-setup_requirements = [
-    "pytest-runner",
-]
+setup_requirements = ["pytest-runner"]
 
 test_requirements = ["pytest>=5.4", "pytest-cov>=2.8", "pytest-runner>=5.2"]
 
@@ -46,6 +44,6 @@ setup(
     test_suite="tests",
     tests_require=test_requirements,
     url="https://github.com/griano/epistoch",
-    version="0.1.7",
+    version="0.1.8",
     zip_safe=False,
 )

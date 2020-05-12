@@ -16,4 +16,3 @@ pyphase.phase module
    :members:
    :undoc-members:
    :show-inheritance:
-

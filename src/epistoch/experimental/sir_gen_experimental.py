@@ -123,20 +123,7 @@ def sir_g2(
     for iteration in range(max_iterations):
         S_guess, I_guess = old_y
         # Integrate again, with the integral, fixing guess
-        args = (
-            beta,
-            gam,
-            I0,
-            times,
-            delta,
-            S_guess,
-            I_guess,
-            survival,
-            pdfs,
-            loss1,
-            dist,
-            "loss",
-        )
+        args = (beta, gam, I0, times, delta, S_guess, I_guess, survival, pdfs, loss1, dist, "loss")
         logger.debug(f"Staring iteration {iteration:d}")
         ret2 = integrate.odeint(func=_deriv2, y0=y0, t=times, args=args, tfirst=True)
         y = ret2.T

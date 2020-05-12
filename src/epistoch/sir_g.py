@@ -28,9 +28,7 @@ def _sir_deriv(t, y, beta, gam):
     return dSdt, dIdt
 
 
-def sir_classical(
-    name, population, reproductive_factor, infectious_period_mean, num_days, I0=1.0, S0=None, times=None,
-):
+def sir_classical(name, population, reproductive_factor, infectious_period_mean, num_days, I0=1.0, S0=None, times=None):
     """
     Solves a classical SIR model.
 

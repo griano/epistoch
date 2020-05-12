@@ -68,7 +68,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/epistoch*.rst
 	rm -f docs/pyphase*.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc --module-first -H "Reference Manual" -o docs/ src
+	sphinx-apidoc --module-first -H "Reference Manual" -o docs/ src src/epistoch/experimental
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(MAKE) -C docs doctest

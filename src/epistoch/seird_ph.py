@@ -12,7 +12,7 @@ from pyphase.phase import ph_mix, ph_sum
 
 
 def seird_ph(
-    name, population, beta, exposed_time, time_to_die, time_to_recover, fatality_rate, num_days, I0=1, logger=None,
+    name, population, beta, exposed_time, time_to_die, time_to_recover, fatality_rate, num_days, I0=1, logger=None
 ):
     """
     Compute a SEIRD model with Phase-Type distribution for the different stages.
