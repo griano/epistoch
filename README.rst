@@ -26,7 +26,7 @@ Traditional epidemiology models, like SIR, do not take into account the distribu
 the infectious period. In this software, we include three functions that compute these type of models
 using other distributions.
 
-.. image:: https://epistoch.readthedocs.io/en/latest/_images/DIVOC-SIR-comp.png
+.. image:: https://github.com/griano/epistoch/raw/master/docs/_static/DIVOC-SIR-comp.png
 
 In this graph you can see how different the predictions are for the regular SIR model with respect to SIR-G
 that actually uses a more realistic distribution for the infectious period.

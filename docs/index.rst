@@ -1,6 +1,8 @@
 EpiStoch's Documentation
 ======================================
 
+.. image:: _static/DIVOC-SIR-comp.png
+
 .. toctree::
    :maxdepth: 4
    :caption: Contents:
