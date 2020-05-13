@@ -2,8 +2,10 @@
 .DEFAULT_GOAL := help
 
 define BROWSER_PYSCRIPT
-import os, webbrowser, sys
-
+import os
+import re
+import sys
+import webbrowser
 from urllib.request import pathname2url
 
 webbrowser.open("file://" + pathname2url(os.path.abspath(sys.argv[1])))
@@ -11,7 +13,6 @@ endef
 export BROWSER_PYSCRIPT
 
 define PRINT_HELP_PYSCRIPT
-import re, sys
 
 for line in sys.stdin:
 	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
@@ -68,7 +69,7 @@ docs: ## generate Sphinx HTML documentation, including API docs
 	rm -f docs/epistoch*.rst
 	rm -f docs/pyphase*.rst
 	rm -f docs/modules.rst
-	sphinx-apidoc --module-first -H "Reference Manual" -o docs/ src src/epistoch/experimental
+	sphinx-apidoc -a --module-first -H "Reference Manual" -o docs/ src src/epistoch/experimental
 	$(MAKE) -C docs clean
 	$(MAKE) -C docs html
 	$(MAKE) -C docs doctest

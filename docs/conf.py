@@ -15,10 +15,8 @@
 import os
 import sys
 
-import epistoch
-
 sys.path.insert(0, os.path.abspath("../src"))
-
+import epistoch
 
 # -- Project information -----------------------------------------------------
 

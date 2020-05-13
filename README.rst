@@ -21,15 +21,16 @@ Epidemics Models with Random Infectious Period
 
 This software allows you to model epidemics with general random distribution for the infectious period.
 
-Traditional epidemiology models like SIr do not take into account the distribution for the length of
-the infectious period. In this software we include three functions that compute this models
+Traditional epidemiology models, like SIR, do not take into account the distribution for the length of
+the infectious period. In this software, we include three functions that compute these type of models
+using other distributions.
 
-.. image:: ./docs/_static/DIVOC-SIR-comp.png
+.. image:: https://epistoch.readthedocs.io/en/latest/_images/DIVOC-SIR-comp.png
 
-In this graph you can see how different the predictions are for the regular SIR modle with respect to SIR-G that actually uses
-a more realistic distribution for the infectious period.
-In SIR-G case the peak of infection occurs before and has a bigger intensity.
-The number of individuals that get infected, however, remains thesame for both models
+In this graph you can see how different the predictions are for the regular SIR model with respect to SIR-G
+that actually uses a more realistic distribution for the infectious period.
+In SIR-G case the peak of infection occurs before, and has a bigger intensity.
+The number of individuals that eventually get infected, however, remains the same for both models
 
 Models
 ------

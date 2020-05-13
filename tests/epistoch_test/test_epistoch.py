@@ -2,13 +2,11 @@ import logging
 import os
 
 import pytest
-from matplotlib import pyplot as plt
 from scipy import stats
 
 from epistoch.seird_ph import seird_ph
 from epistoch.sir_g import sir_classical, sir_g
 from epistoch.sir_phg import sir_phg
-from epistoch.utils.plotting import plot_sir
 from epistoch.utils.utils import print_error, report_summary
 from pyphase.phase import ph_erlang, ph_expon
 
@@ -66,6 +64,9 @@ def test_sir_phg_expon(do_plot=False):
     sir_ph_exp = sir_phg(name="SIR-PH-Expo", population=N, beta=beta, infectious_time_distribution=dist, num_days=160)
     error = print_error(sir, sir_ph_exp)
     if do_plot:
+        from matplotlib import pyplot as plt
+        from epistoch.utils.plotting import plot_sir
+
         fig = plot_sir(sir, title="PH-expo-tests")
         plot_sir(sir_ph_exp, N, fig, linestyle="--")
         plt.show()
@@ -93,6 +94,9 @@ def test_sir_phg_erlang(do_plot=False):
     sir_ph_erlang = sir_phg("SIR-PHG", population=N, beta=beta, infectious_time_distribution=dist)
     error = print_error(sir_g_model, sir_ph_erlang)
     if do_plot:
+        from matplotlib import pyplot as plt
+        from epistoch.utils.plotting import plot_sir
+
         fig = plot_sir(sir_g_model, title="PH-erlang-tests")
         plot_sir(sir_ph_erlang, fig, linestyle="--")
         plt.show()
@@ -142,6 +146,9 @@ def test_seird(do_plot=False):
         num_days=num_days,
     )
     if do_plot:
+        from matplotlib import pyplot as plt
+        from epistoch.utils.plotting import plot_sir
+
         formats = {"S": "b-", "E": "c-", "I": "r-", "R": "g-", "Rc": "y-", "D": "m-"}
         legend_fmt = {"loc": "upper right", "shadow": True, "framealpha": 1.0, "bbox_to_anchor": (1, 1)}
         report_summary(model_expo)
