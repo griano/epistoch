@@ -1,3 +1,5 @@
+
+
 ========
 EpiStoch
 ========
@@ -6,8 +8,8 @@ EpiStoch
 .. image:: https://img.shields.io/pypi/v/epistoch.svg
         :target: https://pypi.python.org/pypi/epistoch
 
-.. image:: https://img.shields.io/travis/griano/epistoch.svg
-        :target: https://travis-ci.com/griano/epistoch
+.. image:: https://travis-ci.com/griano/epistoch.svg?branch=master
+    :target: https://travis-ci.com/griano/epistoch
 
 .. image:: https://readthedocs.org/projects/epistoch/badge/?version=latest
         :target: https://epistoch.readthedocs.io/en/latest/?badge=latest
@@ -34,15 +36,24 @@ The number of individuals that eventually get infected, however, remains the sam
 
 Models
 ------
-* SIR_G: Like the classical SIR model, but with an arbitrary distribution.
-* SIR-PH: A SIR model with Phase-Type distributions for the infectious period
-* SEIRD: A SEIRD Model with hase-Type distributions for each stage.
+* SIR: Classical SIR model, with (implied) exponential infectious period.  :py:func:`epistoch.sir_g.sir_classical`
+* SIR_G: Like the classical SIR model, but with an arbitrary distribution. :py:func:`epistoch.sir_g.sir_g`
+* SIR-PHG: A SIR model with Phase-Type distributions for the infectious period. :py:func:`epistoch.sir_phg.sir_phg`
+* SEIRD: A SEIRD Model with hase-Type distributions for each stage. :py:func:`epistoch.seird_ph.seird_ph`
 
 Notes
 -----
 
-* Paper_
-* Documentation: https://epistoch.readthedocs.io.
+* The theoretical foundation of the method is explained in this paper_.
+
+.. only:: not html
+
+    * Documentation: https://epistoch.readthedocs.io.
+
+.. only:: html
+
+    * Source Code: https://github.com/griano/epistoch.
+
 * Free software: MIT license. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
@@ -50,4 +61,4 @@ Notes
 
 
 
-.. _Paper: https://github.com/griano/epistoch/blob/master/paper/epistoch/epi_stoch.pdf
+.. _paper: https://github.com/griano/epistoch/blob/master/paper/epistoch/epi_stoch.pdf
