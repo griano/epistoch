@@ -1,5 +1,4 @@
 
-
 ========
 EpiStoch
 ========
@@ -34,26 +33,20 @@ that actually uses a more realistic distribution for the infectious period.
 In SIR-G case the peak of infection occurs before, and has a bigger intensity.
 The number of individuals that eventually get infected, however, remains the same for both models
 
+
 Models
 ------
-* SIR: Classical SIR model, with (implied) exponential infectious period.  :py:func:`epistoch.sir_g.sir_classical`
-* SIR_G: Like the classical SIR model, but with an arbitrary distribution. :py:func:`epistoch.sir_g.sir_g`
-* SIR-PHG: A SIR model with Phase-Type distributions for the infectious period. :py:func:`epistoch.sir_phg.sir_phg`
-* SEIRD: A SEIRD Model with hase-Type distributions for each stage. :py:func:`epistoch.seird_ph.seird_ph`
+* `SIR <https://epistoch.readthedocs.io/en/latest/epistoch.html#epistoch.sir_g.sir_classical>`_: Classical SIR model, with (implied) exponential infectious period.
+* `SIR_G <https://epistoch.readthedocs.io/en/latest/epistoch.html#epistoch.sir_g.sir_g>`_: Like the classical SIR model, but with an arbitrary distribution.
+* `SIR-PHG <https://epistoch.readthedocs.io/en/latest/epistoch.html#epistoch.sir_phg.sir_phg>`_: A SIR model with Phase-Type distributions for the infectious period.
+* `SEIRD <https://epistoch.readthedocs.io/en/latest/epistoch.html#epistoch.seird_ph.seird_ph>`_: A SEIRD Model with hase-Type distributions for each stage.
 
 Notes
 -----
 
 * The theoretical foundation of the method is explained in this paper_.
-
-.. only:: not html
-
-    * Documentation: https://epistoch.readthedocs.io.
-
-.. only:: html
-
-    * Source Code: https://github.com/griano/epistoch.
-
+* Documentation: https://epistoch.readthedocs.io.
+* Source Code: https://github.com/griano/epistoch.
 * Free software: MIT license. THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
   FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
