@@ -13,7 +13,6 @@ endef
 export BROWSER_PYSCRIPT
 
 define PRINT_HELP_PYSCRIPT
-
 for line in sys.stdin:
 	match = re.match(r'^([a-zA-Z_-]+):.*?## (.*)$$', line)
 	if match:
