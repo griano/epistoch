@@ -266,6 +266,7 @@
 \newcommand{\Ri}{\ensuremath{R}_\infty\xspace}
 % https://tex.stackexchange.com/questions/76273/multiple-pdfs-with-page-group-included-in-a-single-page-warning
 \pdfsuppresswarningpagegroup=1
+\providecommand{\keywords}[1]{\textbf{\textit{Keywords: }} #1}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% DOCUMENT
@@ -280,24 +281,19 @@
 
 %% The simple version:
 \title{Epidemic Models with Random Infectious Period}
-\author{Germ\'an Ria\~no \\ \href{mailto:griano@germanriano.com}{griano@germanriano.com}}
+\author{Germ\'an Ria\~no \\
+    \href{mailto:griano@germanriano.com}{griano@germanriano.com} \\
+    Amazon.com \footnote{This is independent work, not related to the author's job, and not endorsed by Amazon.com}}
 
 %\date{} %%If commented, the current date is used.
 \maketitle
 
 
 \begin{abstract}
-In this paper, we present an extension to the classical SIR epidemic transmission model that uses any general probability distribution for the length of the infectious period.
-The classical SIR model implicitly requires an exponential distribution for the length of this period of time.
-We will show how a general distribution can be easily taken into account using the Transient Little Law and present numerical methods to solve the model in an efficient way.
-Our numerical experiments show that in the presence of a more realistic distribution, with lower variability than the exponential distribution, the size of peak of infected individuals on the graph will be higher and occur earlier.
-Conversely, a higher-variability distribution will lead to a lower peak that takes longer to dissipate.
-We also discuss some extensions to the basic model, to include variants like SEIRD and SIS.
-Critically, these findings should have profound and important consequences in the design of public policy.
+In this paper, we present an extension to the classical SIR epidemic transmission model that uses any general probability distribution for the length of the infectious period. The classical SIR model implicitly requires an exponential distribution for the length of this period of time. We will show how a general distribution can be easily taken into account using the Transient Little Law and present numerical methods to solve the model in an efficient way. Our numerical experiments show that in the presence of a more realistic distribution, with lower variability than the exponential distribution, the size of peak of infected individuals on the graph will be higher and occur earlier. Conversely, a higher-variability distribution will lead to a lower peak that takes longer to dissipate. We also discuss some extensions to the basic model, to include variants like SEIRD and SIS. These findings should have profound and important consequences in the design of public policy.
 \end{abstract}
 
-
-
+\keywords{Epidemics, Stochastic, Transient Little Law, Random Infectious Period}
 \pagestyle{plain} %Now display headings: headings / fancy / ...
 
 

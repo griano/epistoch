@@ -9,6 +9,7 @@ repos:
     -   id: end-of-file-fixer
     -   id: check-yaml
     -   id: check-added-large-files
+        args: [--maxkb=650]
     -   id: flake8
     -   id: requirements-txt-fixer
 -   repo: https://github.com/psf/black
