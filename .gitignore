@@ -123,3 +123,4 @@ ENV/
 *.lyx
 *.dvi
 *.blg
+/paper/epistoch/epistoch.pdf

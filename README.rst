@@ -54,4 +54,4 @@ Notes
 
 
 
-.. _paper: https://github.com/griano/epistoch/blob/master/paper/epistoch/epi_stoch.pdf
+.. _paper: https://doi.org/10.1101/2020.05.15.20103465
